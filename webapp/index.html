@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spinify Ads</title>
+
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <h1>Spinify Ads</h1>
+    <p>Smart Telegram Ad Scheduler</p>
+  </header>
+
+  <!-- Step Container -->
+  <div class="card" id="step-container">
+
+    <!-- STEP 1 -->
+    <section class="step active" id="step-1">
+      <h2>🔐 API Credentials</h2>
+
+      <input type="number" id="api_id" placeholder="API ID">
+      <input type="text" id="api_hash" placeholder="API Hash">
+
+      <button onclick="goToStep(2)">Continue</button>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step" id="step-2">
+      <h2>📲 Telegram Login</h2>
+
+      <input type="text" id="phone" placeholder="+91XXXXXXXXXX">
+      <input type="text" id="otp" placeholder="Enter OTP">
+
+      <button onclick="goToStep(3)">Verify</button>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step" id="step-3">
+      <h2>👥 Add Groups (Max 5)</h2>
+
+      <textarea id="groups" placeholder="Paste group links (one per line)"></textarea>
+      <p class="hint">You must already be a member</p>
+
+      <button onclick="goToStep(4)">Verify Groups</button>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step" id="step-4">
+      <h2>📝 Saved Ads</h2>
+
+      <textarea id="message" placeholder="Write ad message"></textarea>
+      <button onclick="addMessage()">Add Message</button>
+
+      <ul id="messageList"></ul>
+
+      <button onclick="goToStep(5)">Continue</button>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="step" id="step-5">
+      <h2>🚀 Scheduler</h2>
+
+      <div class="info">
+        <p>⏱ Group Delay: <b>15 sec</b></p>
+        <p>⏳ Message Delay: <b>200 sec</b></p>
+      </div>
+
+      <button class="start" onclick="startScheduler()">Start Ads</button>
+      <button class="stop" onclick="stopScheduler()">Stop Ads</button>
+    </section>
+
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
