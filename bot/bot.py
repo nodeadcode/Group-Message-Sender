@@ -10,8 +10,8 @@ from telegram.ext import (
     ContextTypes
 )
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
-WEBAPP_URL = "https://your-domain.com/webapp"  # change later
+BOT_TOKEN = "8554290865:AAH1qQ0jOSkdj7A6LGCP1rm_KWvCgp_jaqs"
+WEBAPP_URL = "https://cinetimetv.store/"  # change later
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
