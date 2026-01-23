@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 # Configuration
 APP_NAME="spinify-ads"
 APP_DIR="/var/www/$APP_NAME"
-DOMAIN="your-domain.com"  # Change this to your domain
+DOMAIN="cinetimetv.store"  # Your domain
 BACKEND_PORT=8000
 
 echo -e "${GREEN}📦 Step 1: Installing system dependencies...${NC}"
