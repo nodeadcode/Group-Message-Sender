@@ -36,12 +36,15 @@ REM Check .env file
 echo [4/6] Checking configuration...
 if not exist .env (
     echo WARNING: .env file not found!
-    echo Creating from .env.example...
-    copy .env.example .env
     echo.
-    echo IMPORTANT: Edit .env and set your OWNER_TELEGRAM_ID
-    echo           Get your ID from @userinfobot on Telegram
+    echo IMPORTANT: Create .env file with required variables:
+    echo   - BOT_TOKEN
+    echo   - OWNER_TELEGRAM_ID
+    echo   - JWT_SECRET
     echo.
+    echo Cannot proceed without .env file.
+    pause
+    exit /b 1
 )
 echo Configuration file: .env
 echo.
