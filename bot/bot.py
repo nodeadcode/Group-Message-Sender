@@ -195,6 +195,26 @@ async def redeem_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return
         
+        # Check if user already has an active subscription
+        existing_sub = db.query(Subscription).filter(
+            Subscription.user_id == user.id,
+            Subscription.is_active == True
+        ).first()
+        
+        if existing_sub:
+            # Auto-expire if past expiry date
+            if existing_sub.expiry_date < datetime.utcnow():
+                existing_sub.is_active = False
+                db.commit()
+            else:
+                await update.message.reply_text(
+                    f"⚠️ You already have an active subscription!\n\n"
+                    f"Plan: {existing_sub.plan_type}\n"
+                    f"Expires: {existing_sub.expiry_date.strftime('%Y-%m-%d %H:%M')}\n\n"
+                    f"Wait for it to expire before redeeming a new code."
+                )
+                return
+        
         # Get plan details
         plan = PLANS[access_code.plan_type]
         expiry_date = datetime.utcnow() + timedelta(days=plan["duration_days"])
