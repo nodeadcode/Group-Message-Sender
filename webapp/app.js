@@ -12,7 +12,7 @@ if (tg) {
 // ========================================
 const CONFIG = {
   // Change this to your backend URL when deployed
-  API_BASE_URL: 'http://localhost:8000',
+  API_BASE_URL: 'http://157.173.220.198:8000',
   MAX_GROUPS: 10,  // Updated from 5 to 10
   MIN_INTERVAL_MINUTES: 20,
   GROUP_DELAY_SECONDS: 60,
@@ -275,40 +275,72 @@ async function sendOTP() {
   setButtonLoading(button, true);
 
   try {
-    // TODO: Replace with actual backend API call
-    // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    /*
+    // Real API call to send OTP
     const response = await fetch(`${CONFIG.API_BASE_URL}/auth/send-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: phone,
-        api_id: state.credentials.apiId,
-        api_hash: state.credentials.apiHash
+        api_id: parseInt(state.credentials.apiId),
+        api_hash: state.credentials.apiHash,
+        nickname: phone.replace('+', '') // Use phone as default nickname
       })
     });
-    
-    if (!response.ok) {
-      throw new Error('Failed to send OTP');
-    }
-    */
 
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to send OTP');
+    }
+
+    const data = await response.json();
+
+    // Store session data for verification
     state.auth.phone = phone;
+    state.auth.phone_code_hash = data.phone_code_hash;
+    state.auth.session_string = data.session_string;
 
     // Show OTP input field
     document.getElementById('otp-group').style.display = 'block';
+
+    // Add resend button if not exists
+    if (!document.getElementById('resend-otp-btn')) {
+      const resendBtn = document.createElement('button');
+      resendBtn.id = 'resend-otp-btn';
+      resendBtn.className = 'btn-resend';
+      resendBtn.innerHTML = '🔄 Resend OTP';
+      resendBtn.onclick = resendOTP;
+      resendBtn.style.marginTop = '10px';
+      document.getElementById('otp-group').appendChild(resendBtn);
+    }
+
     button.textContent = 'Verify OTP';
     button.onclick = verifyOTP;
 
-    showToast('✓ OTP sent to your phone!', 'success');
+    showToast('✓ OTP sent to your Telegram!', 'success');
 
   } catch (error) {
+    console.error('OTP send error:', error);
     showError('phone', error.message || 'Failed to send OTP');
-    showToast('Failed to send OTP', 'error');
+    showToast('Failed to send OTP: ' + error.message, 'error');
   } finally {
     setButtonLoading(button, false);
+  }
+}
+
+/**
+ * Resend OTP
+ */
+async function resendOTP() {
+  const button = document.getElementById('resend-otp-btn');
+  button.disabled = true;
+  button.textContent = 'Sending...';
+
+  try {
+    await sendOTP();
+    showToast('✓ OTP resent successfully!', 'success');
+  } finally {
+    button.disabled = false;
+    button.textContent = '🔄 Resend OTP';
   }
 }
 
@@ -325,8 +357,9 @@ async function verifyOTP() {
     return;
   }
 
-  if (otp.length !== CONFIG.OTP_LENGTH) {
-    showError('otp', `OTP must be ${CONFIG.OTP_LENGTH} digits`);
+  // Validate OTP is exactly 6 digits
+  if (!/^\d{6}$/.test(otp)) {
+    showError('otp', 'OTP must be exactly 6 digits');
     return;
   }
 
@@ -334,40 +367,54 @@ async function verifyOTP() {
   setButtonLoading(button, true);
 
   try {
-    // TODO: Replace with actual backend API call
-    // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    /*
+    // Real API call to verify OTP
     const response = await fetch(`${CONFIG.API_BASE_URL}/auth/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: state.auth.phone,
         otp: otp,
-        api_id: state.credentials.apiId,
+        phone_code_hash: state.auth.phone_code_hash,
+        session_string: state.auth.session_string,
+        api_id: parseInt(state.credentials.apiId),
         api_hash: state.credentials.apiHash
       })
     });
-    
-    if (!response.ok) {
-      throw new Error('Invalid OTP');
-    }
-    */
 
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Invalid OTP');
+    }
+
+    const data = await response.json();
+
+    // Store authentication success
     state.auth.otp = otp;
     state.auth.isAuthenticated = true;
+    state.auth.account_id = data.account_id;
 
     showToast('✓ Authentication successful!', 'success');
     goToStep(3);
 
   } catch (error) {
-    showError('otp', error.message || 'Invalid OTP');
-    showToast('Invalid OTP', 'error');
+    console.error('OTP verification error:', error);
+    showError('otp', error.message || 'Invalid OTP. Please try again.');
+    showToast('Invalid OTP: ' + error.message, 'error');
   } finally {
     setButtonLoading(button, false);
   }
 }
+
+// Add input event listener to only allow digits in OTP field
+document.addEventListener('DOMContentLoaded', () => {
+  const otpInput = document.getElementById('otp');
+  if (otpInput) {
+    otpInput.addEventListener('input', (e) => {
+      // Remove any non-digit characters
+      e.target.value = e.target.value.replace(/\D/g, '');
+    });
+  }
+});
 
 // ========================================
 // MESSAGE MANAGEMENT

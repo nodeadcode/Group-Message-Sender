@@ -233,12 +233,58 @@ async def redeem_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start_ads(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
-    # later → call backend API
-    await query.edit_message_text(
-        "✅ Scheduler started.\n\n"
-        "Ads will be sent using your saved settings."
-    )
+    
+    user_id = update.effective_user.id
+    db = SessionLocal()
+    
+    try:
+        # Check if user exists
+        user = db.query(User).filter(User.telegram_user_id == user_id).first()
+        if not user:
+            await query.edit_message_text(
+                "❌ Please open the dashboard first!\n\n"
+                f"Visit: {WEBAPP_URL}"
+            )
+            return
+        
+        # Check if user has added telegram accounts
+        accounts_count = db.query(TelegramAccount).filter(
+            TelegramAccount.user_id == user.id,
+            TelegramAccount.is_active == True
+        ).count()
+        
+        if accounts_count == 0:
+            await query.edit_message_text(
+                "⚠️ No Telegram accounts added!\n\n"
+                "To start ads:\n"
+                "1. Open dashboard\n"
+                "2. Add your Telegram account  \n"
+                "3. Create campaign\n\n"
+                f"Dashboard: {WEBAPP_URL}"
+            )
+            return
+        
+        # Check subscription
+        subscription = db.query(Subscription).filter(
+            Subscription.user_id == user.id,
+            Subscription.is_active == True
+        ).first()
+        
+        if not subscription:
+            await query.edit_message_text(
+                "⚠️ No active subscription!\n\n"
+                "Use /redeem CODE first."
+            )
+            return
+        
+        await query.edit_message_text(
+            f"✅ Campaign starting...\n\n"
+            f"📱 Accounts: {accounts_count}\n"
+            f"💳 Plan: {subscription.plan_type}\n\n"
+            f"Manage: {WEBAPP_URL}"
+        )
+    finally:
+        db.close()
 
 
 async def stop_ads(update: Update, context: ContextTypes.DEFAULT_TYPE):

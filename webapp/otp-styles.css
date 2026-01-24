@@ -1,0 +1,35 @@
+.btn-resend {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-resend:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-resend:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* OTP Input styling */
+#otp {
+    font-size: 18px;
+    letter-spacing: 4px;
+    text-align: center;
+    font-weight: 600;
+}
+
+#otp::placeholder {
+    letter-spacing: normal;
+    font-weight: normal;
+}
