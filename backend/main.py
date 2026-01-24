@@ -34,10 +34,11 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        WEBAPP_URL,
-        "http://localhost:8080",
-        "https://cinetimetv.store",
-        "http://cinetimetv.store"
+        "*"  # Allow all origins for now to fix connection issues
+        # WEBAPP_URL,
+        # "http://localhost:8080",
+        # "https://cinetimetv.store",
+        # "http://cinetimetv.store"
     ],
     allow_credentials=True,
     allow_methods=["*"],
