@@ -51,28 +51,59 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_message = f"""
-🎉 **Welcome to Spinify Ads, {user.first_name}!**
+🎉 **Welcome to Spinify Ads, {user.first_name}!** 🎉
 
-Your all-in-one solution for automated Telegram group advertising.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 **Your Smart Telegram Ad Automation Platform**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✨ **Features:**
-• 📱 Multi-account management
-• 🔄 Auto-forward via Saved Messages
-• ⏰ Smart scheduling with intervals
-• 🌙 Night mode (12 AM - 6 AM)
-• 🤖 Auto-reply to personal messages
-• 💬 Send to up to 10 groups
-• 🎯 Real-time campaign control
+✨ **Premium Features:**
 
+📱 **Multi-Account Management**
+   • Connect multiple Telegram accounts
+   • Switch between accounts seamlessly
+   
+🔄 **Smart Auto-Forwarding**
+   • Forward ads via Saved Messages
+   • Automated posting to groups
+   
+⏰ **Intelligent Scheduling**
+   • Custom intervals (20min - 4hrs)
+   • Set it and forget it
+   
+🌙 **Night Mode Protection**
+   • Auto-pause: 12 AM - 6 AM
+   • Respect user sleep time
+   
+🤖 **Auto-Reply System**
+   • Respond to personal messages
+   • Customizable reply messages
+   
+💬 **Bulk Group Posting**
+   • Send to up to 10 groups
+   • Smart delay management
+   
+🎯 **Real-Time Control**
+   • Start/Stop campaigns instantly
+   • Monitor from anywhere
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 💰 **Subscription Plans:**
-• Weekly: ₹99 (7 days)
-• Monthly: ₹299 (30 days)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+📦 **Weekly**  → ₹99  (7 days)
+📦 **Monthly** → ₹299 (30 days)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📝 **Quick Commands:**
-• `/redeem <code>` - Activate subscription
-• `/start` - Show this message
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-👉 Click **"Open Dashboard"** to get started!
+• `/start` - Show this menu
+• `/redeem <code>` - Activate subscription
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👉 Click **"🚀 Open Dashboard"** below to start!
 """
 
     await update.message.reply_text(
@@ -139,12 +170,18 @@ async def generate_access_code(update: Update, context: ContextTypes.DEFAULT_TYP
         
         plan = PLANS[plan_type]
         await update.message.reply_text(
-            f"✅ Code generated!\n\n"
-            f"Code: `{code}`\n"
-            f"Plan: {plan['name']}\n"
-            f"Price: ₹{plan['price']}\n"
-            f"Duration: {plan['duration_days']} days\n\n"
-            f"Share this code with users to activate their subscription.",
+            f"✅ **Code Generated Successfully!**\n\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🎟️ **Access Code:** `{code}`\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"📦 **Plan Details:**\n"
+            f"• Name: {plan['name']}\n"
+            f"• Price: ₹{plan['price']}\n"
+            f"• Duration: {plan['duration_days']} days\n\n"
+            f"💡 **Instructions:**\n"
+            f"Share this code with users to activate their subscription.\n\n"
+            f"User activation command:\n"
+            f"`/redeem {code}`",
             parse_mode="Markdown"
         )
         
@@ -237,12 +274,16 @@ async def redeem_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
         db.commit()
         
         await update.message.reply_text(
-            f"🎉 Subscription activated!\n\n"
-            f"Plan: {plan['name']}\n"
-            f"Price: ₹{plan['price']}\n"
-            f"Valid until: {expiry_date.strftime('%Y-%m-%d %H:%M')}\n"
-            f"Days: {plan['duration_days']}\n\n"
-            f"You can now use all features in the dashboard!",
+            f"🎉 **Subscription Activated!** 🎉\n\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📦 **Plan:** {plan['name']}\n"
+            f"💰 **Price:** ₹{plan['price']}\n"
+            f"📅 **Valid Until:** {expiry_date.strftime('%d %b %Y, %I:%M %p')}\n"
+            f"⏱️ **Duration:** {plan['duration_days']} days\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"✨ **You're all set!**\n"
+            f"All premium features are now unlocked.\n\n"
+            f"🚀 Open the dashboard to start your first campaign!",
             parse_mode="Markdown"
         )
         
@@ -324,28 +365,42 @@ async def view_plans(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     
     plans_message = """
-💳 **Subscription Plans**
+💳 **Subscription Plans** 💳
 
-📦 **Weekly Plan - ₹99**
-• 7 days full access
-• All features included
-• Perfect for testing
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📦 **Monthly Plan - ₹299**
-• 30 days full access
-• All features included
-• Best value!
+📦 **Weekly Plan**
+💰 Price: **₹99**
+📅 Duration: **7 days**
+✨ All Features Included
+🎯 Perfect for testing!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 **Monthly Plan** ⭐ *BEST VALUE*
+💰 Price: **₹299**
+📅 Duration: **30 days**
+✨ All Features Included
+🚀 Recommended for serious users!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🎟️ **How to Subscribe:**
-1. Get an access code from the owner
-2. Use `/redeem <code>` to activate
-3. Start using all premium features!
 
-💰 **Payment Options:**
-• Razorpay (UPI, Cards, Net Banking)
-• Crypto (BTC, ETH, USDT, etc.)
+1️⃣ Get an access code from [@spinify](https://t.me/spinify)
+2️⃣ Use `/redeem <code>` to activate
+3️⃣ Start using premium features!
 
-Contact owner for codes or direct payment!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💰 **Payment Methods:**
+
+• 💳 Razorpay (UPI, Cards, Net Banking)
+• 🪙 Crypto (BTC, ETH, USDT, etc.)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📱 Contact [@spinify](https://t.me/spinify) for codes!
 """
     
     keyboard = [[InlineKeyboardButton("« Back", callback_data="back_to_start")]]
