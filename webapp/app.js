@@ -11,8 +11,10 @@ if (tg) {
 // CONFIGURATION
 // ========================================
 const CONFIG = {
-  // Change this to your backend URL when deployed
-  API_BASE_URL: 'http://157.173.220.198:8000',
+  // API Base URL - Must use HTTPS to avoid "Failed to fetch" errors
+  // If hosted on the same domain, use '/api' (requires Nginx proxy)
+  // Or use full URL: 'https://cinetimetv.store/api'
+  API_BASE_URL: 'https://cinetimetv.store/api',
   MAX_GROUPS: 10,  // Updated from 5 to 10
   MIN_INTERVAL_MINUTES: 20,
   GROUP_DELAY_SECONDS: 60,
