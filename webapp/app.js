@@ -385,6 +385,20 @@ async function verifyOTP() {
 
     if (!response.ok) {
       const error = await response.json();
+
+      // Handle 2FA Password Required
+      if (response.status === 401 && error.detail.includes('2FA')) {
+        showToast('🔒 Two-Step Verification Required', 'info');
+        document.getElementById('password-group').style.display = 'block';
+        document.getElementById('otp-group').style.display = 'none';
+
+        // Change button to Verify Password
+        button.textContent = 'Verify Password';
+        button.onclick = verifyPassword;
+        setButtonLoading(button, false);
+        return;
+      }
+
       throw new Error(error.detail || 'Invalid OTP');
     }
 
@@ -399,13 +413,69 @@ async function verifyOTP() {
     goToStep(3);
 
   } catch (error) {
-    console.error('OTP verification error:', error);
-    showError('otp', error.message || 'Invalid OTP. Please try again.');
-    showToast('Invalid OTP: ' + error.message, 'error');
+    console.error('Verify OTP error:', error);
+    showError('otp', error.message || 'Verification failed');
+    showToast('Verification failed: ' + error.message, 'error');
+  } finally {
+    const isPasswordVisible = document.getElementById('password-group').style.display === 'block';
+    if (!isPasswordVisible) {
+      setButtonLoading(button, false);
+    }
+  }
+}
+
+/**
+ * Verify 2FA Password
+ */
+async function verifyPassword() {
+  clearError('password');
+  const password = document.getElementById('password').value.trim();
+
+  if (!password) {
+    showError('password', 'Password is required');
+    return;
+  }
+
+  const button = document.getElementById('verify-btn');
+  setButtonLoading(button, true);
+
+  try {
+    const response = await fetch(`${CONFIG.API_BASE_URL}/auth/2fa`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: state.auth.phone,
+        password: password,
+        phone_code_hash: state.auth.phone_code_hash,
+        session_string: state.auth.session_string,
+        api_id: parseInt(state.credentials.apiId),
+        api_hash: state.credentials.apiHash
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Invalid Password');
+    }
+
+    const data = await response.json();
+
+    // Store authentication success
+    state.auth.isAuthenticated = true;
+    state.auth.account_id = data.account_id;
+
+    showToast('✓ Authentication successful!', 'success');
+    goToStep(3);
+
+  } catch (error) {
+    console.error('2FA Verify error:', error);
+    showError('password', error.message || 'Verification failed');
+    showToast('Verification failed: ' + error.message, 'error');
   } finally {
     setButtonLoading(button, false);
   }
 }
+
 
 // Add input event listener to only allow digits in OTP field
 document.addEventListener('DOMContentLoaded', () => {
