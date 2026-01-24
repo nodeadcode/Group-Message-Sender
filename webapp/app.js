@@ -11,11 +11,8 @@ if (tg) {
 // CONFIGURATION
 // ========================================
 const CONFIG = {
-  // API Base URL - Must use HTTPS to avoid "Failed to fetch" errors
-  // If hosted on the same domain, use '/api' (requires Nginx proxy)
-  // Or use full URL: 'https://cinetimetv.store/api'
-  API_BASE_URL: 'api.cinetimetv.store',
-  MAX_GROUPS: 10,  // Updated from 5 to 10
+  API_BASE_URL: 'https://api.cinetimetv.store',
+  MAX_GROUPS: 10,
   MIN_INTERVAL_MINUTES: 20,
   GROUP_DELAY_SECONDS: 60,
   MESSAGE_DELAY_SECONDS: 60,
