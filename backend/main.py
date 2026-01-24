@@ -16,8 +16,10 @@ from config import (
     PLANS, API_BASE_URL, WEBAPP_URL
 )
 from telegram_auth import verify_telegram_login
-from telethon_login import send_otp, verify_otp
+from telegram_auth import verify_telegram_login
+# Removed telethon_login imports as they are used in auth.py now
 from auto_reply import AutoReplyHandler
+from auth import router as auth_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -183,120 +185,8 @@ async def telegram_auth(data: dict, db: Session = Depends(get_db)):
         logger.error(f"Telegram auth error: {e}")
         raise HTTPException(status_code=403, detail=str(e))
 
-@app.post("/auth/send-otp")
-async def send_otp_endpoint(request: SendOTPRequest, db: Session = Depends(get_db)):
-    """Send OTP to phone number for account linking (No auth required)"""
-    try:
-        result = await send_otp(request.api_id, request.api_hash, request.phone)
-        
-        # Store session info with phone as temporary key
-        session_key = f"temp_{request.phone}"
-        otp_sessions[session_key] = {
-            "phone_code_hash": result["phone_code_hash"],
-            "session": result["session"],
-            "api_id": request.api_id,
-            "api_hash": request.api_hash,
-            "nickname": request.nickname
-        }
-        
-        return {
-            "status": "success",
-            "phone_code_hash": result["phone_code_hash"],
-            "session_string": result["session_string"]
-        }
-    except Exception as e:
-        logger.error(f"Send OTP error: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
-
-@app.post("/auth/verify-otp")
-async def verify_otp_endpoint(request: VerifyOTPRequest, db: Session = Depends(get_db)):
-    """Verify OTP and create Telegram account session (No auth required - creates user if needed)"""
-    try:
-        session_key = f"temp_{request.phone}"
-        session_data = otp_sessions.get(session_key)
-        
-        if not session_data:
-            raise HTTPException(status_code=400, detail="Session expired or invalid")
-        
-        # Get or create user based on phone (temporary - should use Telegram auth later)
-        user = db.query(User).filter(User.telegram_user_id == 0).first()  # Placeholder
-        if not user:
-            # Create a temporary user - they'll need to use Telegram login for full access
-            user = User(
-                telegram_user_id=0,  # Placeholder - will be updated via Telegram auth
-                username=f"user_{request.phone.replace('+', '')}",
-                first_name="User"
-            )
-            db.add(user)
-            db.commit()
-            db.refresh(user)
-        
-        # Call verify_otp with new signature
-        result = await verify_otp(
-            session_data["api_id"],
-            session_data["api_hash"],
-            request.phone,
-            request.otp,
-            request.phone_code_hash,
-            request.session_string
-        )
-        
-        # Save session to file
-        session_dir = "sessions"
-        os.makedirs(session_dir, exist_ok=True)
-        session_path = os.path.join(session_dir, f"{user.id}.session")
-        
-        # In a real scenario with StringSession, we might just store the string in DB
-        # But to maintain compatibility with existing logic, we can save it to file
-        # Or better, just use the string session if the system supports it. 
-        # The previous logic expected a file path. Let's write the string to the file 
-        # or use StringSession directly if possible.
-        # Actually, client.session.save() in telethon_login returned the string.
-        # We can write this string to a file if the rest of the app expects a file.
-        # Telethon StringSession can be loaded from string.
-        
-        # Let's save the session string to the session file location so other parts can load it?
-        # Or if other parts use SQLiteSession, this might be tricky. 
-        # The current telethon_login uses StringSession.
-        # Let's assume we store the session string in the database or use it as is.
-        # But wait, TelegramAccount model has session_file column.
-        
-        # Let's write the session string to the file to keep "session_file" path valid
-        # OR update the model to store session_string.
-        # For minimal disruption, let's write to file if that's what was happening.
-        # But StringSession is text.
-        
-        with open(session_path, "w") as f:
-            f.write(result["session"])
-        
-        if result.get("error"):
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        # Create TelegramAccount
-        account = TelegramAccount(
-            user_id=user.id,
-            nickname=session_data["nickname"],
-            api_id=session_data["api_id"],
-            api_hash=session_data["api_hash"],  # TODO: Encrypt this
-            phone=request.phone,
-            session_file=result["session_file"],
-            is_active=True,
-            status="authenticated"
-        )
-        db.add(account)
-        db.commit()
-        db.refresh(account)
-        
-        # Clean up session
-        del otp_sessions[session_key]
-        
-        return {
-            "status": "success",
-            "account_id": account.id
-        }
-    except Exception as e:
-        logger.error(f"Verify OTP error: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
+# Mount Auth Router
+app.include_router(auth_router)
 
 # ============================================================================
 # USER PROFILE ENDPOINTS
