@@ -82,3 +82,42 @@ async def verify_otp(
         "first_name": me.first_name,
         "session": session
     }
+
+
+# ==============================
+# STEP 3: VERIFY PASSWORD (2FA)
+# ==============================
+async def verify_password(
+    api_id: int,
+    api_hash: str,
+    phone: str,
+    password: str,
+    phone_code_hash: str,
+    session_string: str
+):
+    """
+    Verify 2FA password & return session
+    """
+
+    client = TelegramClient(
+        StringSession(session_string),
+        api_id,
+        api_hash
+    )
+
+    await client.connect()
+
+    try:
+        await client.sign_in(password=password)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    session = client.session.save()
+    me = await client.get_me()
+
+    return {
+        "user_id": me.id,
+        "username": me.username,
+        "first_name": me.first_name,
+        "session": session
+    }
