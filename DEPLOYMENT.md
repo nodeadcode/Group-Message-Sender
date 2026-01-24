@@ -327,3 +327,4 @@ If you encounter issues:
 ---
 
 **Your app should now be live at: `https://your-domain.com` 🎉**
+up
