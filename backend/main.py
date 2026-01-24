@@ -183,13 +183,13 @@ async def telegram_auth(data: dict, db: Session = Depends(get_db)):
         raise HTTPException(status_code=403, detail=str(e))
 
 @app.post("/auth/send-otp")
-async def send_otp_endpoint(request: SendOTPRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    """Send OTP to phone number for account linking"""
+async def send_otp_endpoint(request: SendOTPRequest, db: Session = Depends(get_db)):
+    """Send OTP to phone number for account linking (No auth required)"""
     try:
         result = await send_otp(request.api_id, request.api_hash, request.phone)
         
-        # Store session info
-        session_key = f"{user.id}_{request.phone}"
+        # Store session info with phone as temporary key
+        session_key = f"temp_{request.phone}"
         otp_sessions[session_key] = {
             "phone_code_hash": result["phone_code_hash"],
             "session": result["session"],
@@ -208,14 +208,27 @@ async def send_otp_endpoint(request: SendOTPRequest, user: User = Depends(get_cu
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/auth/verify-otp")
-async def verify_otp_endpoint(request: VerifyOTPRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    """Verify OTP and create Telegram account session"""
+async def verify_otp_endpoint(request: VerifyOTPRequest, db: Session = Depends(get_db)):
+    """Verify OTP and create Telegram account session (No auth required - creates user if needed)"""
     try:
-        session_key = f"{user.id}_{request.phone}"
+        session_key = f"temp_{request.phone}"
         session_data = otp_sessions.get(session_key)
         
         if not session_data:
-            raise HTTPException(status_code=400, detail="Session expired")
+            raise HTTPException(status_code=400, detail="Session expired or invalid")
+        
+        # Get or create user based on phone (temporary - should use Telegram auth later)
+        user = db.query(User).filter(User.telegram_user_id == 0).first()  # Placeholder
+        if not user:
+            # Create a temporary user - they'll need to use Telegram login for full access
+            user = User(
+                telegram_user_id=0,  # Placeholder - will be updated via Telegram auth
+                username=f"user_{request.phone.replace('+', '')}",
+                first_name="User"
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
         
         result = await verify_otp(
             session_data["api_id"],

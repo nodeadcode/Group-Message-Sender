@@ -20,7 +20,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
 from database import SessionLocal
-from models import User, AccessCode, Subscription
+from models import User, AccessCode, Subscription, TelegramAccount
 from config import OWNER_TELEGRAM_ID, PLANS, BOT_TOKEN, WEBAPP_URL
 
 
