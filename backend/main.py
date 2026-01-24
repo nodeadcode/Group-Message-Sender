@@ -27,10 +27,13 @@ logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Spinify Ads API",
-    description="Telegram Group Advertisement Automation API",
     version="1.0.0"
 )
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "timestamp": datetime.utcnow()}
 
 # CORS Configuration
 app.add_middleware(
