@@ -35,12 +35,14 @@ echo ""
 echo "[4/6] Checking configuration..."
 if [ ! -f ".env" ]; then
     echo "WARNING: .env file not found!"
-    echo "Creating from .env.example..."
-    cp .env.example .env
     echo ""
-    echo "IMPORTANT: Edit .env and set your OWNER_TELEGRAM_ID"
-    echo "           Get your ID from @userinfobot on Telegram"
+    echo "IMPORTANT: Create .env file with required variables:"
+    echo "  - BOT_TOKEN"
+    echo "  - OWNER_TELEGRAM_ID"
+    echo "  - JWT_SECRET"
     echo ""
+    echo "Cannot proceed without .env file."
+    exit 1
 fi
 echo "Configuration file: .env"
 echo ""

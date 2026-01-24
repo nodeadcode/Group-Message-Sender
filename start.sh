@@ -21,7 +21,7 @@ fi
 # Check if .env exists
 if [ ! -f ".env" ]; then
     echo -e "${RED}Error: .env file not found!${NC}"
-    echo "Copy .env.example to .env and configure it"
+    echo "Create .env file with BOT_TOKEN, OWNER_TELEGRAM_ID, JWT_SECRET"
     exit 1
 fi
 
