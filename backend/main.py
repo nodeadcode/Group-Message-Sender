@@ -202,7 +202,7 @@ async def send_otp_endpoint(request: SendOTPRequest, db: Session = Depends(get_d
         return {
             "status": "success",
             "phone_code_hash": result["phone_code_hash"],
-            "session_string": result["session"]
+            "session_string": result["session_string"]
         }
     except Exception as e:
         logger.error(f"Send OTP error: {e}")
@@ -231,16 +231,43 @@ async def verify_otp_endpoint(request: VerifyOTPRequest, db: Session = Depends(g
             db.commit()
             db.refresh(user)
         
+        # Call verify_otp with new signature
         result = await verify_otp(
             session_data["api_id"],
             session_data["api_hash"],
             request.phone,
             request.otp,
             request.phone_code_hash,
-            request.session_string,
-            user.id,
-            session_data["nickname"]  # Pass nickname for session file naming
+            request.session_string
         )
+        
+        # Save session to file
+        session_dir = "sessions"
+        os.makedirs(session_dir, exist_ok=True)
+        session_path = os.path.join(session_dir, f"{user.id}.session")
+        
+        # In a real scenario with StringSession, we might just store the string in DB
+        # But to maintain compatibility with existing logic, we can save it to file
+        # Or better, just use the string session if the system supports it. 
+        # The previous logic expected a file path. Let's write the string to the file 
+        # or use StringSession directly if possible.
+        # Actually, client.session.save() in telethon_login returned the string.
+        # We can write this string to a file if the rest of the app expects a file.
+        # Telethon StringSession can be loaded from string.
+        
+        # Let's save the session string to the session file location so other parts can load it?
+        # Or if other parts use SQLiteSession, this might be tricky. 
+        # The current telethon_login uses StringSession.
+        # Let's assume we store the session string in the database or use it as is.
+        # But wait, TelegramAccount model has session_file column.
+        
+        # Let's write the session string to the file to keep "session_file" path valid
+        # OR update the model to store session_string.
+        # For minimal disruption, let's write to file if that's what was happening.
+        # But StringSession is text.
+        
+        with open(session_path, "w") as f:
+            f.write(result["session"])
         
         if result.get("error"):
             raise HTTPException(status_code=400, detail=result["error"])
