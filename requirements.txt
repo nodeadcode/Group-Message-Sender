@@ -3,12 +3,20 @@ fastapi
 uvicorn
 python-multipart
 itsdangerous
+python-dotenv
 
 # Telegram Bot
 python-telegram-bot==20.7
 
 # Telegram User Account (OTP login + messaging)
 telethon
+
+# Database
+sqlalchemy
+cryptography
+
+# Authentication
+pyjwt
 
 # Async & utilities
 asyncio

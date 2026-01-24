@@ -1,199 +1,302 @@
-# 🚀 Spinify Ads - Telegram Group Advertisement Scheduler
+# 🚀 Spinify Ads - Telegram Group Advertisement Automation
 
-A beautiful, modern web application for scheduling and automating advertisement messages across multiple Telegram groups. Built with a premium glassmorphic UI and powered by Python backend.
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)](https://github.com/yourusername/Group-Message-Sender)
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-green)](https://fastapi.tiangolo.com/)
 
-![Spinify Ads](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-blue)
-![Python](https://img.shields.io/badge/Python-3.8+-blue)
+> **Your all-in-one solution for automated Telegram group advertising with multi-account management, smart scheduling, and auto-reply features.**
+
+![Spinify Ads](https://via.placeholder.com/800x400/6366f1/ffffff?text=Spinify+Ads+Dashboard)
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Technology Stack](#-technology-stack)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [API Documentation](#-api-documentation)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## ✨ Features
 
-### 🎨 Premium UI/UX
-- **Glassmorphic Design** - Modern translucent cards with backdrop blur
-- **Vibrant Gradients** - Eye-catching purple and pink color schemes
-- **Smooth Animations** - Micro-interactions throughout the app
-- **Fully Responsive** - Works seamlessly on mobile, tablet, and desktop
-- **Dark Theme** - Professional dark mode interface
+### 🎯 Core Features
 
-### 🔧 Core Functionality
-- **Multi-Group Support** - Manage up to 10 Telegram groups
-- **Message Scheduling** - Automated message forwarding with configurable intervals
-- **Smart Delays** - 60-second delays between groups and messages to avoid spam detection
-- **Night Mode** - Auto-pause campaigns during night hours (10 PM - 6 AM)
-- **Saved Messages** - Messages saved to Telegram first, then forwarded to groups
-- **Session Management** - Persistent user sessions across server restarts
+- **📱 Multi-Account Management** - Add and manage multiple Telegram accounts
+- **🔄 Smart Message Forwarding** - Auto-forward via Saved Messages to groups
+- **⏰ Intelligent Scheduling** - Configurable intervals (20min - 4 hours)
+- **🌙 Night Mode** - Auto-pause campaigns (12 AM - 6 AM)
+- **🤖 Auto-Reply System** - Respond to personal messages automatically
+- **💬 Multi-Group Support** - Send to up to 10 groups per campaign
+- **🎯 Real-Time Control** - Start/stop campaigns instantly
 
-### ⚙️ Campaign Configuration
-- **Flexible Intervals** - Choose from 20 minutes to 4 hours between campaigns
-- **Custom Delays** - Configurable delays between groups and messages
-- **Night Mode Toggle** - Prevent messaging during specified night hours
-- **Real-time Status** - Live campaign status monitoring
+### 💰 Subscription & Payments
 
-## 🎯 Use Cases
+- **💳 Multiple Payment Options:**
+  - **Razorpay** - UPI, Cards, Net Banking, Wallets
+  - **Crypto** - BTC, ETH, USDT, and 50+ cryptocurrencies
+- **🎟️ Access Code System** - Generate and redeem subscription codes
+- **📊 Flexible Plans:**
+  - Weekly: ₹99 (7 days)
+  - Monthly: ₹299 (30 days)
 
-- **Business Promotion** - Advertise products/services to multiple groups
-- **Event Announcements** - Share event details across communities
-- **Content Distribution** - Broadcast content to your audience
-- **Community Management** - Send updates to multiple groups efficiently
+### 🛡️ Security & Privacy
 
-## 📸 Screenshots
+- **🔐 Encrypted Sessions** - Secure Telethon session storage
+- **🔑 JWT Authentication** - Token-based API security
+- **🛡️ Rate Limiting** - Built-in delays to avoid spam detection
+- **🔒 Encrypted Credentials** - API credentials stored securely
 
-### Step 1: API Credentials
-Beautiful glassmorphic design with gradient accents
+### 🎨 User Interface
 
-### Step 5: Campaign Configuration
-![Campaign Configuration](https://via.placeholder.com/800x400?text=Campaign+Configuration+Interface)
-
-Advanced scheduling with interval selector and night mode toggle
+- **📱 Telegram Web App** - Seamless in-app experience
+advanced - **✨ Glassmorphic Design** - Modern translucent UI with animations
+- **📊 Real-Time Dashboard** - Monitor campaign status live
+- **🌐 Fully Responsive** - Works on mobile, tablet, desktop
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- Telegram API credentials ([Get them here](https://my.telegram.org/apps))
-- Node.js (optional, for development)
+- Python 3.8+
+- Telegram account
+- Telegram API credentials ([Get here](https://my.telegram.org/apps))
+- (Optional) Razorpay account for payments
+- (Optional) CoinGate account for crypto payments
 
-### Installation
+### 5-Minute Setup
 
-1. **Clone the repository**
 ```bash
+# 1. Clone repository
 git clone https://github.com/yourusername/Group-Message-Sender.git
 cd Group-Message-Sender
-```
 
-2. **Install dependencies**
-```bash
+# 2. Install dependencies
 pip install -r requirements.txt
-```
 
-3. **Start the web server**
-```bash
-# Simple HTTP server for testing
-python -m http.server 8080 --directory webapp
+# 3. Configure environment
+cp .env.example .env
+# Edit .env with your credentials
 
-# Or use the FastAPI backend
+# 4. Initialize database
 cd backend
+python -c "from database import init_db; init_db()"
+
+# 5. Run the bot
+cd ../bot
+python bot.py
+
+# 6. Run the backend (new terminal)
+cd ../backend
 uvicorn main:app --reload
+
+# 7. Run the frontend (new terminal)
+python -m http.server 8080 --directory webapp
 ```
 
-4. **Open your browser**
+Visit: `http://localhost:8080` 🎉
+
+## 🛠️ Technology Stack
+
+### Backend
+- **FastAPI** - Modern async web framework
+- **SQLAlchemy** - Database ORM
+- **Telethon** - Telegram MTProto client
+- **python-telegram-bot** - Bot framework
+- **Razorpay** - Payment gateway (INR)
+- **CoinGate** - Crypto payment processor
+
+### Frontend
+- **Vanilla JavaScript** - No framework overhead
+- **HTML5/CSS3** - Semantic markup with modern styling
+- **Telegram Web App** - Native Telegram integration
+
+### Database
+- **SQLite** - Development (easy setup)
+- **PostgreSQL** - Production (recommended)
+
+## 📦 Installation
+
+### Detailed Installation
+
+See [SETUP_GUIDE.md](SETUP_GUIDE.md) for complete step-by-step instructions.
+
+### Docker Installation (Coming Soon)
+
+```bash
+docker-compose up -d
 ```
-http://localhost:8080
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create `.env` file in root directory:
+
+```env
+# Bot Configuration
+BOT_TOKEN=your_bot_token_from_botfather
+OWNER_TELEGRAM_ID=your_telegram_user_id
+
+# Security
+SESSION_SECRET=random_secret_string
+JWT_SECRET=another_random_secret
+
+# Database
+DATABASE_URL=sqlite:///./app.db
+
+# Payment Gateways (Optional)
+RAZORPAY_KEY_ID=rzp_xxxxx
+RAZORPAY_KEY_SECRET=xxxxx
+COINGATE_API_TOKEN=xxxxx
 ```
+
+### Getting Credentials
+
+**Telegram API:**
+1. Visit https://my.telegram.org/apps
+2. Create new application
+3. Copy API ID and API Hash
+
+**Bot Token:**
+1. Message @BotFather on Telegram
+2. Create new bot with `/newbot`
+3. Copy the token
+
+See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed instructions.
+
+## 📖 Usage
+
+### For Users
+
+1. **Start the bot** - Send `/start` to your bot
+2. **Redeem code** - `/redeem YOUR_CODE`
+3. **Open dashboard** - Click "🚀 Open Dashboard"
+4. **Add account** - Enter API ID, Hash, Phone
+5. **Verify OTP** - Enter code from Telegram
+6. **Add groups** - Paste group links
+7. **Create messages** - Write your ads
+8. **Start campaign** - Configure and launch!
+
+### For Owners
+
+Generate access codes:
+```
+/generate weekly   # Create ₹99 weekly code
+/generate monthly  # Create ₹299 monthly code
+```
+
+### Bot Commands
+
+- `/start` - Welcome message and dashboard
+- `/redeem <code>` - Activate subscription
+- `/generate <plan>` - Generate access code (owner only)
+
+## 📡 API Documentation
+
+### Authentication Endpoints
+
+```http
+POST /auth/telegram
+POST /auth/send-otp
+POST /auth/verify-otp
+```
+
+### Subscription Endpoints
+
+```http
+GET  /subscription/status
+POST /subscription/validate
+```
+
+### Account Management
+
+```http
+GET    /accounts
+POST   /accounts
+DELETE /accounts/{id}
+PUT    /accounts/{id}/activate
+```
+
+### Campaign Management
+
+```http
+POST   /campaign/create
+POST   /campaign/start
+POST   /campaign/stop
+PUT    /campaign/update
+GET    /campaign/status
+```
+
+### Payment Endpoints
+
+```http
+POST /payments/create
+POST /payments/razorpay/verify
+POST /payments/razorpay/webhook
+POST /payments/coingate/webhook
+GET  /payments/history
+```
+
+**Full API Docs:** Visit `http://localhost:8000/docs` when backend is running.
 
 ## 🏗️ Project Structure
 
 ```
 Group-Message-Sender/
-├── webapp/                 # Frontend application
-│   ├── index.html         # Main HTML file
-│   ├── style.css          # Premium CSS styling (1000+ lines)
-│   └── app.js             # JavaScript logic (700+ lines)
-├── backend/               # Python backend
-│   ├── main.py           # FastAPI application
-│   ├── scheduler.py      # Campaign scheduling logic
-│   ├── telegram_auth.py  # Telegram authentication
-│   ├── telethon_login.py # Telethon integration
-│   └── group_verify.py   # Group verification
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
+├── backend/              # FastAPI backend
+│   ├── models.py        # Database models
+│   ├── database.py      # DB configuration
+│   ├── main.py          # API endpoints
+│   ├── config.py        # Settings
+│   ├── payments.py      # Payment integration
+│   ├── auto_reply.py    # Auto-reply handler
+│   └── telethon_login.py
+├── bot/                 # Telegram bot
+│   └── bot.py          # Bot commands
+├── webapp/              # Frontend
+│   ├── index.html
+│   ├── app.js
+│   └── style.css
+├── .env.example         # Environment template
+├── requirements.txt     # Dependencies
+└── README.md           # This file
 ```
 
-## 📝 Configuration
+## 🚀 Deployment
 
-### Telegram API Setup
+### Production Deployment
 
-1. Visit [my.telegram.org/apps](https://my.telegram.org/apps)
-2. Log in with your phone number
-3. Create a new application
-4. Copy your `API ID` and `API Hash`
-5. Enter these in Step 1 of the web app
+See [DEPLOYMENT.md](DEPLOYMENT.md) for VPS deployment guide.
 
-### Campaign Settings
-
-- **Max Groups**: Up to 10 groups per campaign
-- **Group Delay**: 60 seconds between each group
-- **Message Delay**: 60 seconds between each message
-- **Min Interval**: 20 minutes between campaign cycles
-- **Night Mode**: 10 PM - 6 AM (configurable)
-
-## 🔒 Security Features
-
-- **Encrypted Sessions** - User sessions stored securely
-- **No Data Leaks** - Messages only forwarded, never stored on server
-- **Rate Limiting** - Built-in delays to prevent spam detection
-- **Secure Storage** - API credentials encrypted in database
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **HTML5** - Semantic markup
-- **CSS3** - Glassmorphism, gradients, animations
-- **JavaScript ES6+** - Modern async/await patterns
-- **Google Fonts** - Inter font family
-
-### Backend
-- **Python 3.8+** - Core language
-- **FastAPI** - Modern web framework
-- **Telethon** - Telegram client library
-- **SQLAlchemy** - Database ORM (planned)
-
-## 📖 Usage Guide
-
-### Step-by-Step Workflow
-
-1. **API Credentials** - Enter your Telegram API ID and Hash
-2. **Authentication** - Verify your phone number via Telegram OTP
-3. **Add Groups** - Input up to 10 Telegram group links
-4. **Create Messages** - Write and save your advertisement messages
-5. **Configure Campaign** - Set interval and enable night mode if needed
-6. **Launch** - Start your automated campaign!
-
-### Message Flow
-
-```
-User Message → Saved Messages → Group 1 (60s) → Group 2 (60s) → ... → Group 10
-                                     ↓
-                              Wait for Interval (20min - 4hr)
-                                     ↓
-                              Repeat with Next Message
+Quick deploy to VPS:
+```bash
+./deploy-vps.sh
 ```
 
-## 🎨 Design Philosophy
+### Recommended Hosting
 
-The UI follows modern design principles:
-
-- **Glassmorphism** - Translucent surfaces with backdrop blur
-- **Vibrant Colors** - Carefully selected gradient combinations
-- **Micro-interactions** - Smooth animations on every interaction
-- **Mobile-first** - Responsive design that works everywhere
-- **Accessibility** - High contrast and readable fonts
-
-## 🔄 Roadmap
-
-- [ ] Database integration (SQLite/PostgreSQL)
-- [ ] User authentication system
-- [ ] Campaign analytics dashboard
-- [ ] Image/media support for ads
-- [ ] Scheduled campaigns (date/time picker)
-- [ ] Group performance tracking
-- [ ] Multi-user support
-- [ ] Admin panel
+- **Backend:** DigitalOcean, Heroku, Railway
+- **Database:** PostgreSQL on Supabase, Railway
+- **Frontend:** Vercel, Netlify, Cloudflare Pages
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
 
 ## 👨‍💻 Author
 
@@ -204,20 +307,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Built with ❤️ using modern web technologies
-- Inspired by the need for efficient group management
-- Thanks to the Telethon community for their excellent library
+- [Telethon](https://github.com/LonamiWebs/Telethon) - Excellent Telegram client library
+- [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework
+- [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) - Bot framework
 
 ## 📞 Support
 
-If you have any questions or need help, feel free to:
+- 📧 Email: support@spinify.com
+- 💬 Telegram: [@spinify](https://t.me/spinify)
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/Group-Message-Sender/issues)
+- 📖 Docs: [Setup Guide](SETUP_GUIDE.md)
 
-- Open an issue on GitHub
-- Contact [@spinify](https://t.me/spinify) on Telegram
-- Check the [Documentation](docs/)
+## ⭐ Star History
+
+If you find this project useful, please consider giving it a star!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/Group-Message-Sender&type=Date)](https://star-history.com/#yourusername/Group-Message-Sender&Date)
 
 ---
 
-**⭐ Star this repo if you find it useful!**
-
-Made with ✨ by @spinify
+**Made with ❤️ by @spinify** | **⭐ Star this repo if you find it useful!**

@@ -2,13 +2,12 @@ import hashlib
 import hmac
 import time
 from urllib.parse import parse_qsl
-
 from fastapi import Request, HTTPException
-
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+from config import BOT_TOKEN
 
 
 def verify_telegram_login(data: dict) -> dict:
+    """Verify Telegram Login Widget authentication"""
     if "hash" not in data:
         raise HTTPException(status_code=403, detail="Missing hash")
 
@@ -29,7 +28,7 @@ def verify_telegram_login(data: dict) -> dict:
     if calculated_hash != received_hash:
         raise HTTPException(status_code=403, detail="Invalid Telegram login")
 
-    # optional: auth freshness (5 min)
+    # Optional: auth freshness (5 min)
     auth_date = int(data.get("auth_date", 0))
     if time.time() - auth_date > 300:
         raise HTTPException(status_code=403, detail="Login expired")
