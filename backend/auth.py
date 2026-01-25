@@ -74,6 +74,20 @@ async def send_otp_route(request: SendOTPRequest):
 async def verify_otp_route(request: VerifyOTPRequest, db: Session = Depends(get_db)):
     """Verify OTP and authenticate user"""
     try:
+        # Check if already has active session for this phone
+        existing_account = db.query(TelegramAccount).filter(
+            TelegramAccount.phone == request.phone,
+            TelegramAccount.is_active == True
+        ).first()
+
+        if existing_account and os.path.exists(existing_account.session_file):
+            logger.info(f"Using existing session for {request.phone}")
+            return {
+                "user_id": existing_account.user_id,
+                "session":  open(existing_account.session_file).read() if os.path.exists(existing_account.session_file) else None,
+                "message": "Session restored"
+            }
+
         session_key = f"temp_{request.phone}"
         session_data = otp_sessions.get(session_key)
         
@@ -106,43 +120,47 @@ async def verify_otp_route(request: VerifyOTPRequest, db: Session = Depends(get_
             request.session_string
         )
         
-        # 3. Save session file (required for bot)
+        # 3. Save session file (PERSISTENT)
         session_dir = "sessions"
         os.makedirs(session_dir, exist_ok=True)
-        session_path = os.path.join(session_dir, f"{user.id}.session")
+        # Use phone number for filename to make it easy to map
+        session_filename = f"{request.phone.replace('+', '')}.session"
+        session_path = os.path.join(session_dir, session_filename)
         
         with open(session_path, "w") as f:
             f.write(result["session"])
             
         # 4. Create/Update TelegramAccount
-        # This part was in main.py, moving it here or ensuring main.py handles it
-        # The user's snippet didn't include DB logic, but we MUST have it
-        account = TelegramAccount(
-            user_id=user.id,
-            phone_number=request.phone,
-            api_id=str(api_id),
-            api_hash=api_hash,
-            session_file=session_path,
-            is_active=True
-        )
-        db.add(account)
-        try:
-            db.commit()
-        except:
-            db.rollback()
-            # If account exists, update it
-            existing = db.query(TelegramAccount).filter(
-                TelegramAccount.phone_number == request.phone
-            ).first()
-            if existing:
-                existing.session_file = session_path
-                existing.is_active = True
-                db.commit()
+        account = db.query(TelegramAccount).filter(TelegramAccount.phone == request.phone).first()
+        if not account:
+            account = TelegramAccount(
+                user_id=user.id,
+                nickname=session_data.get("nickname", request.phone),
+                phone=request.phone,
+                api_id=api_id,
+                api_hash=api_hash,
+                session_file=session_path,
+                is_active=True,
+                status="authenticated"
+            )
+            db.add(account)
+        else:
+            account.session_file = session_path
+            account.is_active = True
+            account.status = "authenticated"
+            account.api_id = api_id
+            account.api_hash = api_hash
+            
+        db.commit()
 
         return result
         
     except Exception as e:
         logger.error(f"Verify OTP error: {e}")
+        # If active session check failed, continue to re-verify or raise error
+        if "Session restored" not in str(e):
+             raise HTTPException(status_code=400, detail=str(e))
+        return {"status": "error", "detail": str(e)}
 class VerifyPasswordRequest(BaseModel):
     phone: str
     password: str
