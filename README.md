@@ -27,36 +27,29 @@
 ### 🎯 Core Features
 
 - **📱 Multi-Account Management** - Add and manage multiple Telegram accounts
-- **🔄 Smart Message Forwarding** - Auto-forward via Saved Messages to groups
+- **🔄 Smart Message Scheduling** - Schedule and send messages to multiple groups
 - **⏰ Intelligent Scheduling** - Configurable intervals (20min - 4 hours)
-- **🌙 Night Mode** - Auto-pause campaigns (12 AM - 6 AM)
+- **🌙 Night Mode** - Auto-pause campaigns (10 PM - 6 AM)
 - **🤖 Auto-Reply System** - Respond to personal messages automatically
 - **💬 Multi-Group Support** - Send to up to 10 groups per campaign
 - **🎯 Real-Time Control** - Start/stop campaigns instantly
-
-### 💰 Subscription & Payments
-
-- **💳 Multiple Payment Options:**
-  - **Razorpay** - UPI, Cards, Net Banking, Wallets
-  - **Crypto** - BTC, ETH, USDT, and 50+ cryptocurrencies
-- **🎟️ Access Code System** - Generate and redeem subscription codes
-- **📊 Flexible Plans:**
-  - Weekly: ₹99 (7 days)
-  - Monthly: ₹299 (30 days)
+- **📲 OTP Authentication** - Secure Telegram account verification with resend OTP option
+- **🔐 2FA Support** - Two-factor authentication for enhanced security
 
 ### 🛡️ Security & Privacy
 
-- **🔐 Encrypted Sessions** - Secure Telethon session storage
+- **🔐 Encrypted Sessions** - Secure Telethon session storage in dedicated sessions folder
 - **🔑 JWT Authentication** - Token-based API security
-- **🛡️ Rate Limiting** - Built-in delays to avoid spam detection
-- **🔒 Encrypted Credentials** - API credentials stored securely
+- **🛡️ Rate Limiting** - Built-in 60-second delays between messages and groups
+- **🔒 Secure Credentials** - API credentials handled securely
 
 ### 🎨 User Interface
 
-- **📱 Telegram Web App** - Seamless in-app experience
-advanced - **✨ Glassmorphic Design** - Modern translucent UI with animations
-- **📊 Real-Time Dashboard** - Monitor campaign status live
-- **🌐 Fully Responsive** - Works on mobile, tablet, desktop
+- **✨ Modern Glassmorphic Design** - Beautiful translucent UI with smooth animations
+- **📊 Progressive Step Form** - Intuitive 5-step setup process
+- **📱 Fully Responsive** - Optimized for mobile, tablet, and desktop
+- **🌐 Web-Based Dashboard** - No installation required, works in any browser
+- **🎯 Real-Time Feedback** - Toast notifications and status updates
 
 ## 🚀 Quick Start
 
@@ -68,7 +61,7 @@ advanced - **✨ Glassmorphic Design** - Modern translucent UI with animations
 - (Optional) Razorpay account for payments
 - (Optional) CoinGate account for crypto payments
 
-### 5-Minute Setup
+### Quick Setup
 
 ```bash
 # 1. Clone repository
@@ -79,23 +72,26 @@ cd Group-Message-Sender
 pip install -r requirements.txt
 
 # 3. Configure environment
-cp .env.example .env
-# Edit .env with your credentials
+# Create .env file with your credentials:
+# BOT_TOKEN=your_bot_token
+# OWNER_TELEGRAM_ID=your_telegram_id
+# JWT_SECRET=your_secret_key
+# API_BASE_URL=http://localhost:8000
+# WEBAPP_URL=http://localhost:8080
 
 # 4. Initialize database
-cd backend
-python -c "from database import init_db; init_db()"
+python backend/init_db.py
 
-# 5. Run the bot
-cd ../bot
-python bot.py
+# 5. Start components (3 separate terminals):
+# Terminal 1 - Bot:
+python bot/bot.py
 
-# 6. Run the backend (new terminal)
-cd ../backend
-uvicorn main:app --reload
+# Terminal 2 - Backend API:
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
-# 7. Run the frontend (new terminal)
-python -m http.server 8080 --directory webapp
+# Terminal 3 - Frontend:
+cd webapp
+python -m http.server 8080
 ```
 
 Visit: `http://localhost:8080` 🎉
@@ -105,25 +101,39 @@ Visit: `http://localhost:8080` 🎉
 ### Backend
 - **FastAPI** - Modern async web framework
 - **SQLAlchemy** - Database ORM
-- **Telethon** - Telegram MTProto client
-- **python-telegram-bot** - Bot framework
-- **Razorpay** - Payment gateway (INR)
-- **CoinGate** - Crypto payment processor
+- **Telethon** - Telegram MTProto client library
+- **python-telegram-bot** - Telegram bot framework
+- **PyJWT** - JWT token authentication
+- **APScheduler** - Advanced Python scheduler
+- **Uvicorn** - ASGI server
 
 ### Frontend
-- **Vanilla JavaScript** - No framework overhead
-- **HTML5/CSS3** - Semantic markup with modern styling
-- **Telegram Web App** - Native Telegram integration
+- **Vanilla JavaScript** - Lightweight, no framework overhead
+- **HTML5/CSS3** - Semantic markup with modern glassmorphic styling
+- **Google Fonts (Inter)** - Premium typography
 
 ### Database
-- **SQLite** - Development (easy setup)
-- **PostgreSQL** - Production (recommended)
+- **SQLite** - Default (easy setup, portable)
+- **PostgreSQL** - Production recommended
 
 ## 📦 Installation
 
-### Detailed Installation
+### Manual Installation
 
-See [SETUP_GUIDE.md](SETUP_GUIDE.md) for complete step-by-step instructions.
+If you prefer to install manually without the setup scripts:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Initialize database
+python backend/init_db.py
+
+# Run components separately
+python bot/bot.py                    # Terminal 1: Bot
+uvicorn backend.main:app --reload    # Terminal 2: Backend API
+python -m http.server 8080           # Terminal 3: Frontend (in webapp/)
+```
 
 ### Docker Installation (Coming Soon)
 
@@ -142,17 +152,21 @@ Create `.env` file in root directory:
 BOT_TOKEN=your_bot_token_from_botfather
 OWNER_TELEGRAM_ID=your_telegram_user_id
 
+# API URLs
+API_BASE_URL=http://localhost:8000
+WEBAPP_URL=http://localhost:8080
+
 # Security
-SESSION_SECRET=random_secret_string
-JWT_SECRET=another_random_secret
+JWT_SECRET=your_random_jwt_secret_key_here
+JWT_ALGORITHM=HS256
+JWT_EXPIRATION_HOURS=168
 
-# Database
+# Telegram Bot Username
+BOT_USERNAME=your_bot_username
+
+# Database (SQLite by default)
 DATABASE_URL=sqlite:///./app.db
-
-# Payment Gateways (Optional)
-RAZORPAY_KEY_ID=rzp_xxxxx
-RAZORPAY_KEY_SECRET=xxxxx
-COINGATE_API_TOKEN=xxxxx
+# For PostgreSQL: postgresql://user:password@localhost/dbname
 ```
 
 ### Getting Credentials
@@ -167,79 +181,83 @@ COINGATE_API_TOKEN=xxxxx
 2. Create new bot with `/newbot`
 3. Copy the token
 
-See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed instructions.
+**Your Telegram User ID:**
+1. Message @userinfobot on Telegram
+2. Copy your User ID for OWNER_TELEGRAM_ID in .env
 
 ## 📖 Usage
 
-### For Users
+### Web Application Workflow
 
-1. **Start the bot** - Send `/start` to your bot
-2. **Redeem code** - `/redeem YOUR_CODE`
-3. **Open dashboard** - Click "🚀 Open Dashboard"
-4. **Add account** - Enter API ID, Hash, Phone
-5. **Verify OTP** - Enter code from Telegram
-6. **Add groups** - Paste group links
-7. **Create messages** - Write your ads
-8. **Start campaign** - Configure and launch!
-
-### For Owners
-
-Generate access codes:
-```
-/generate weekly   # Create ₹99 weekly code
-/generate monthly  # Create ₹299 monthly code
-```
+1. **Open Dashboard** - Navigate to `http://localhost:8080`
+2. **Step 1: API Credentials** - Enter your Telegram API ID and Hash
+3. **Step 2: Phone Verification** 
+   - Enter phone number with country code (e.g., +1234567890)
+   - Click "Send OTP" to receive verification code
+   - Enter 6-digit OTP from Telegram
+   - Click "Verify OTP" (supports 2FA if enabled)
+4. **Step 3: Add Groups** - Paste Telegram group links (max 10)
+5. **Step 4: Create Messages** - Write and save your ad messages
+6. **Step 5: Configure & Launch**
+   - Set campaign interval (20min - 4 hours)
+   - Toggle night mode (10 PM - 6 AM pause)
+   - Start/stop campaign with one click
 
 ### Bot Commands
 
-- `/start` - Welcome message and dashboard
-- `/redeem <code>` - Activate subscription
-- `/generate <plan>` - Generate access code (owner only)
+- `/start` - Welcome message and bot information
+- Additional commands can be added in `bot/bot.py`
 
 ## 📡 API Documentation
 
 ### Authentication Endpoints
 
 ```http
-POST /auth/telegram
-POST /auth/send-otp
-POST /auth/verify-otp
+POST   /auth/telegram          # Telegram widget authentication
+POST   /auth/send-otp          # Send OTP to phone number
+POST   /auth/verify-otp        # Verify OTP code
+POST   /auth/2fa               # Verify 2FA password
 ```
 
-### Subscription Endpoints
+### User Profile
 
 ```http
-GET  /subscription/status
-POST /subscription/validate
+GET    /user/profile           # Get current user profile
+PUT    /user/profile           # Update user profile
 ```
 
 ### Account Management
 
 ```http
-GET    /accounts
-POST   /accounts
-DELETE /accounts/{id}
-PUT    /accounts/{id}/activate
+GET    /accounts               # List all Telegram accounts
+DELETE /accounts/{id}          # Delete account
+PUT    /accounts/{id}/activate # Set account as active
+GET    /accounts/{id}/status   # Check account status
 ```
 
 ### Campaign Management
 
 ```http
-POST   /campaign/create
-POST   /campaign/start
-POST   /campaign/stop
-PUT    /campaign/update
-GET    /campaign/status
+POST   /campaign/create        # Create new campaign
+POST   /campaign/start         # Start campaign
+POST   /campaign/stop          # Stop campaign
+PUT    /campaign/update        # Update campaign settings
+GET    /campaign/status        # Get campaign status
 ```
 
-### Payment Endpoints
+### Auto-Reply Settings
 
 ```http
-POST /payments/create
-POST /payments/razorpay/verify
-POST /payments/razorpay/webhook
-POST /payments/coingate/webhook
-GET  /payments/history
+GET    /auto-reply/settings/{account_id}  # Get auto-reply settings
+PUT    /auto-reply/settings/{account_id}  # Update auto-reply settings
+POST   /auto-reply/toggle/{account_id}    # Toggle auto-reply on/off
+```
+
+### Health Check
+
+```http
+GET    /health                 # API health check
+GET    /                       # API root info
 ```
 
 **Full API Docs:** Visit `http://localhost:8000/docs` when backend is running.
@@ -248,34 +266,62 @@ GET  /payments/history
 
 ```
 Group-Message-Sender/
-├── backend/              # FastAPI backend
-│   ├── models.py        # Database models
-│   ├── database.py      # DB configuration
-│   ├── main.py          # API endpoints
-│   ├── config.py        # Settings
-│   ├── payments.py      # Payment integration
-│   ├── auto_reply.py    # Auto-reply handler
-│   └── telethon_login.py
+├── backend/              # FastAPI backend API
+│   ├── main.py          # Main API endpoints & CORS config
+│   ├── auth.py          # Authentication routes (OTP, 2FA)
+│   ├── models.py        # SQLAlchemy database models
+│   ├── database.py      # Database configuration
+│   ├── config.py        # App settings & environment vars
+│   ├── scheduler.py     # Campaign scheduler logic
+│   ├── auto_reply.py    # Auto-reply message handler
+│   ├── telegram_auth.py # Telegram login verification
+│   ├── telethon_login.py # Telethon session management
+│   ├── group_verify.py  # Group validation utilities
+│   └── init_db.py       # Database initialization script
 ├── bot/                 # Telegram bot
-│   └── bot.py          # Bot commands
-├── webapp/              # Frontend
-│   ├── index.html
-│   ├── app.js
-│   └── style.css
-├── .env.example         # Environment template
-├── requirements.txt     # Dependencies
+│   └── bot.py          # Bot commands & handlers
+├── webapp/              # Frontend web application
+│   ├── index.html      # Main HTML structure
+│   ├── app.js          # Frontend logic & API calls
+│   ├── style.css       # Main styles (glassmorphic design)
+│   └── otp-styles.css  # Additional OTP-specific styles
+├── sessions/            # Telethon session files (auto-created)
+├── .env                # Environment variables (create manually)
+├── .gitignore          # Git ignore rules
+├── requirements.txt    # Python dependencies
+├── app.db              # SQLite database (auto-created)
 └── README.md           # This file
 ```
 
 ## 🚀 Deployment
 
-### Production Deployment
+### VPS Deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for VPS deployment guide.
+For production deployment:
 
-Quick deploy to VPS:
-```bash
-./deploy-vps.sh
+1. **Install Python 3.8+** and pip
+2. **Clone repository** and install dependencies
+3. **Configure .env** with production settings
+4. **Set up systemd services** for bot and backend
+5. **Configure Nginx** as reverse proxy for backend/frontend
+6. **Use PostgreSQL** instead of SQLite (update DATABASE_URL)
+7. **Set up SSL** with Let's Encrypt
+
+Example systemd service (`/etc/systemd/system/spinify-bot.service`):
+```ini
+[Unit]
+Description=Spinify Ads Bot
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/Group-Message-Sender
+ExecStart=/usr/bin/python3 /path/to/Group-Message-Sender/bot/bot.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 ### Recommended Hosting
@@ -313,10 +359,9 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 
 ## 📞 Support
 
-- 📧 Email: support@spinify.com
 - 💬 Telegram: [@spinify](https://t.me/spinify)
 - 🐛 Issues: [GitHub Issues](https://github.com/yourusername/Group-Message-Sender/issues)
-- 📖 Docs: [Setup Guide](SETUP_GUIDE.md)
+- 📖 API Docs: Run backend and visit `http://localhost:8000/docs`
 
 ## ⭐ Star History
 
