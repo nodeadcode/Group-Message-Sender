@@ -112,8 +112,12 @@
             <button class="btn-secondary" onclick="goToStep(1)">
               ← Back
             </button>
-            <button class="btn-primary" id="send-otp-btn" onclick="handleOTPButton()">
+            <button class="btn-primary" id="send-otp-btn" onclick="sendOTP()">
               Send OTP
+              <span class="btn-arrow">→</span>
+            </button>
+            <button class="btn-primary" id="verify-otp-btn" onclick="verifyOTP()" style="display:none;">
+              Verify OTP
               <span class="btn-arrow">→</span>
             </button>
           </div>

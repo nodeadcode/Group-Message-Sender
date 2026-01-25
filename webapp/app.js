@@ -358,7 +358,7 @@ async function verifyOTP() {
     return;
   }
 
-  const button = document.getElementById('send-otp-btn');
+  const button = document.getElementById('verify-otp-btn');
   setButtonLoading(button, true);
 
   try {
