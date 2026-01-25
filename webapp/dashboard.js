@@ -152,10 +152,37 @@ function stopAutomation() {
     alert("Stop feature pending backend user mapping (Phase 4).");
 }
 
-function logout() {
-    localStorage.clear();
-    window.location.href = 'index.html';
+async function loadAdminStats() {
+    try {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/admin/stats`);
+        const data = await response.json();
+
+        document.getElementById('admin-total-users').innerText = data.total_users;
+        document.getElementById('admin-active-automations').innerText = data.active_automations;
+    } catch (e) {
+        console.error("Admin stats error", e);
+    }
 }
+
+async function sendBroadcast() {
+    const msg = document.getElementById('broadcast-msg').value;
+    if (!msg) return alert("Please enter a message");
+
+    if (!confirm("Are you sure you want to send this to ALL users?")) return;
+
+    try {
+        await fetch(`${CONFIG.API_BASE_URL}/api/admin/broadcast`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        alert("Broadcast queued!");
+        document.getElementById('broadcast-msg').value = "";
+    } catch (e) {
+        alert("Broadcast failed");
+    }
+}
+
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
