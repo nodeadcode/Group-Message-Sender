@@ -1,4 +1,4 @@
-// Add input event listeners to OTP boxes for auto-focus and auto-submit
+// Add input event listeners to OTP boxes for auto-focus only (NO auto-submit)
 document.addEventListener('DOMContentLoaded', () => {
     for (let i = 1; i <= 6; i++) {
         const box = document.getElementById(`otp-${i}`);
@@ -10,21 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Auto-focus to next box
                 if (e.target.value.length === 1 && i < 6) {
                     document.getElementById(`otp-${i + 1}`).focus();
-                }
-
-                // Auto-submit when all 6 digits are entered
-                if (i === 6 && e.target.value.length === 1) {
-                    // Check if all boxes are filled
-                    let allFilled = true;
-                    for (let j = 1; j <= 6; j++) {
-                        if (!document.getElementById(`otp-${j}`).value) {
-                            allFilled = false;
-                            break;
-                        }
-                    }
-                    if (allFilled) {
-                        verifyOTP();
-                    }
                 }
             });
 
