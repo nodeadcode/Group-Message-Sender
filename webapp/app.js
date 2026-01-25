@@ -120,7 +120,10 @@ function setButtonLoading(button, isLoading) {
     button.disabled = true;
   } else {
     button.classList.remove('loading');
-    button.disabled = false;
+    // Don't re-enable if we're verifying OTP
+    if (!button.classList.contains('verifying')) {
+      button.disabled = false;
+    }
   }
 }
 
@@ -253,6 +256,17 @@ function validateMessages() {
 // ========================================
 
 /**
+ * Handle OTP button click - routes to send or verify based on state
+ */
+function handleOTPButton() {
+  if (state.auth.otpSent) {
+    verifyOTP();
+  } else {
+    sendOTP();
+  }
+}
+
+/**
  * Send OTP to phone number
  */
 async function sendOTP() {
@@ -303,9 +317,8 @@ async function sendOTP() {
     otpInput.disabled = false;
     otpInput.focus();
 
-    // Change button text and function
+    // Change button text
     button.innerHTML = 'Verify OTP <span class="btn-arrow">→</span>';
-    button.onclick = verifyOTP;
     state.auth.otpSent = true;
 
     showToast('✓ OTP sent to your Telegram!', 'success');
