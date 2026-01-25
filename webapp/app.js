@@ -1,11 +1,12 @@
 const CONFIG = {
-  // API_BASE_URL: 'http://localhost:8000' // DEV
-  API_BASE_URL: 'https://api.cinetimetv.store' // PROD
+  API_BASE_URL: 'http://localhost:8000' // DEV
+  // API_BASE_URL: 'https://api.cinetimetv.store' // PROD
 };
 
 const state = {
   phone: '',
   phone_code_hash: '',
+  session_string: '',
   api_id: null,
   api_hash: null,
   user: null
@@ -62,6 +63,7 @@ async function handleSendOTP() {
     // Store temp state
     state.phone = phone;
     state.phone_code_hash = res.phone_code_hash;
+    state.session_string = res.session_string;
     state.api_id = parseInt(api_id);
     state.api_hash = api_hash;
 
@@ -92,6 +94,7 @@ async function handleVerifyOTP() {
       phone: state.phone,
       otp: otpCode,
       phone_code_hash: state.phone_code_hash,
+      session_string: state.session_string,
       api_id: state.api_id || 0,
       api_hash: state.api_hash || ""
     });

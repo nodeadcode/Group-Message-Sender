@@ -38,13 +38,7 @@ def health_check():
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        WEBAPP_URL,
-        "https://cinetimetv.store",
-        "http://cinetimetv.store"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
