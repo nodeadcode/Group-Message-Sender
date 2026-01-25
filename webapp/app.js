@@ -409,8 +409,15 @@ async function verifyOTP() {
     state.auth.isAuthenticated = true;
     state.auth.account_id = data.account_id;
 
-    showToast('✓ Authentication successful!', 'success');
-    goToStep(3);
+    // Store simple session ref
+    localStorage.setItem('user_phone', state.auth.phone);
+
+    showToast('✓ Login Successful! Redirecting...', 'success');
+
+    // REDIRECT TO DASHBOARD
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 1000);
 
   } catch (error) {
     console.error('Verify OTP error:', error);
