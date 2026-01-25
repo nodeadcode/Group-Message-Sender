@@ -783,6 +783,13 @@ function toggleNightMode() {
  * Initialize the app
  */
 function initApp() {
+  // Check if already logged in (Persistent Session)
+  if (localStorage.getItem('user_phone')) {
+    console.log("Found existing session, redirecting...");
+    window.location.href = 'dashboard.html';
+    return;
+  }
+
   console.log('🚀 Spinify Ads initialized');
 
   // Check user access status
