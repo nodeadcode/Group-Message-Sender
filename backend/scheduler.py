@@ -14,7 +14,11 @@ class Scheduler:
         self.api_id = api_id
         self.api_hash = api_hash
         self.groups = groups          # list of group IDs/Links
-        self.interval_seconds = max(interval_minutes * 60, MIN_MESSAGE_DELAY)
+        
+        # STRICT: Minimum 20 minutes loop interval (1200 seconds)
+        # Even if frontend sends less, backend enforces 20m
+        sanitized_interval = max(interval_minutes, 20)
+        self.interval_seconds = sanitized_interval * 60
         self.running = False
         self.client = None
 
