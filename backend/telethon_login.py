@@ -121,3 +121,50 @@ async def verify_password(
         "first_name": me.first_name,
         "session": session
     }
+
+# ==============================
+# STEP 4: GET SAVED MESSAGES (AUTOMATION)
+# ==============================
+async def get_saved_messages(
+    api_id: int,
+    api_hash: str,
+    session_file: str,
+    limit: int = 10
+):
+    """
+    Fetch messages from user's 'Saved Messages' (me)
+    Top to bottom (oldest to newest logic handled in app)
+    """
+    # Use FileSession if path provided, else StringSession
+    if os.path.exists(session_file):
+        client = TelegramClient(session_file, api_id, api_hash)
+    else:
+        # Fallback if session_file is actually a string string
+        client = TelegramClient(StringSession(session_file), api_id, api_hash)
+
+    await client.connect()
+    
+    if not await client.is_user_authorized():
+        await client.disconnect()
+        raise HTTPException(status_code=401, detail="Session invalid or expired")
+
+    messages = []
+    try:
+        # Get 'Saved Messages' (peer='me')
+        # Using reverse=True to get oldest first if needed, 
+        # but let's just get recent ones for now and sort in logic
+        async for message in client.iter_messages('me', limit=limit):
+            if message.text: # Only text for now, can expand to media
+             messages.append({
+                 "id": message.id,
+                 "text": message.text,
+                 "date": message.date.isoformat(),
+                 "media": bool(message.media)
+             })
+             
+    except Exception as e:
+        await client.disconnect()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    await client.disconnect()
+    return messages
