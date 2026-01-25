@@ -78,7 +78,7 @@ function switchView(viewName) {
         </div>
       </div>`;
         loadAdminStats();
-    } else {
+    } else if (viewName === 'automations') {
         container.innerHTML = `
       <div id="view-automations">
         <div class="content-header">
