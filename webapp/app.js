@@ -303,20 +303,10 @@ async function sendOTP() {
     otpInput.disabled = false;
     otpInput.focus();
 
-    // Hide Send OTP button, show Verify OTP button
-    button.style.display = 'none';
-    document.getElementById('verify-otp-btn').style.display = 'inline-flex';
-
-    // Add resend button if not exists
-    if (!document.getElementById('resend-otp-btn')) {
-      const resendBtn = document.createElement('button');
-      resendBtn.id = 'resend-otp-btn';
-      resendBtn.className = 'btn-resend';
-      resendBtn.innerHTML = '🔄 Resend OTP';
-      resendBtn.onclick = resendOTP;
-      resendBtn.style.marginTop = '10px';
-      document.getElementById('otp-group').appendChild(resendBtn);
-    }
+    // Change button text and function
+    button.innerHTML = 'Verify OTP <span class="btn-arrow">→</span>';
+    button.onclick = verifyOTP;
+    state.auth.otpSent = true;
 
     showToast('✓ OTP sent to your Telegram!', 'success');
 
@@ -365,7 +355,7 @@ async function verifyOTP() {
     return;
   }
 
-  const button = document.getElementById('verify-btn');
+  const button = document.getElementById('send-otp-btn');
   setButtonLoading(button, true);
 
   try {
@@ -477,13 +467,18 @@ async function verifyPassword() {
 }
 
 
-// Add input event listener to only allow digits in OTP field
+// Add input event listener to only allow digits in OTP field and auto-submit
 document.addEventListener('DOMContentLoaded', () => {
   const otpInput = document.getElementById('otp');
   if (otpInput) {
     otpInput.addEventListener('input', (e) => {
       // Remove any non-digit characters
       e.target.value = e.target.value.replace(/\D/g, '');
+
+      // Auto-submit when 6 digits are entered
+      if (e.target.value.length === 6) {
+        verifyOTP();
+      }
     });
   }
 });
