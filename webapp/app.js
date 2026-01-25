@@ -471,8 +471,14 @@ async function verifyPassword() {
     state.auth.isAuthenticated = true;
     state.auth.account_id = data.account_id;
 
-    showToast('✓ Authentication successful!', 'success');
-    goToStep(3);
+    // Store simple session ref
+    localStorage.setItem('user_phone', state.auth.phone);
+
+    showToast('✓ Login Successful! Redirecting...', 'success');
+
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 1000);
 
   } catch (error) {
     console.error('2FA Verify error:', error);
