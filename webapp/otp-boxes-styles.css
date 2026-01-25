@@ -1,0 +1,29 @@
+/* OTP Boxes */
+.otp-boxes {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.otp-box {
+    width: 50px !important;
+    height: 60px;
+    padding: 0 !important;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 2px solid var(--glass-border) !important;
+    transition: all var(--transition-fast);
+}
+
+.otp-box:focus {
+    border-color: rgba(102, 126, 234, 0.8) !important;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), var(--shadow-glow-primary) !important;
+    transform: scale(1.1);
+}
+
+.otp-box:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spinify Ads | Premium Dashboard</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=6">
+</head>
+
+<body>
+  <!-- Background Elements -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <div class="app-container">
+
+    <!-- ==================== AUTH SECTION ==================== -->
+    <div id="auth-view" class="auth-view">
+      <div class="glass-panel auth-card">
+        <div class="logo-large">Spinify</div>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Secure Telegram Automation</p>
+
+        <!-- STEP 1: PHONE INPUT -->
+        <div id="step-phone" class="auth-step active">
+          <div class="input-group">
+            <label>API ID</label>
+            <input type="text" id="api_id" placeholder="e.g. 2134435">
+          </div>
+          <div class="input-group">
+            <label>API HASH</label>
+            <input type="text" id="api_hash" placeholder="Your API Hash key">
+          </div>
+          <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" id="phone_number" placeholder="+1234567890">
+          </div>
+          <button class="btn" id="btn-send-otp" onclick="handleSendOTP()">Send Access Code</button>
+          <!-- Loading State -->
+          <div id="loader-phone" style="display:none; margin-top:10px;">
+            <span style="font-size:0.9rem; color:var(--color-accent);">Connecting...</span>
+          </div>
+        </div>
+
+        <!-- STEP 2: VERIFY OTP (Segmented) -->
+        <div id="step-otp" class="auth-step">
+          <h3 style="margin-bottom:0.5rem;">Enter Code</h3>
+          <p style="font-size:0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            We sent a code to your Telegram app.
+          </p>
+
+          <div class="otp-container">
+            <input type="text" class="otp-input" id="otp-1" maxlength="1">
+            <input type="text" class="otp-input" id="otp-2" maxlength="1">
+            <input type="text" class="otp-input" id="otp-3" maxlength="1">
+            <input type="text" class="otp-input" id="otp-4" maxlength="1">
+            <input type="text" class="otp-input" id="otp-5" maxlength="1">
+            <input type="text" class="otp-input" id="otp-6" maxlength="1">
+          </div>
+
+          <button class="btn" id="btn-verify-otp" onclick="handleVerifyOTP()" style="margin-top: 2rem;">Verify &
+            Proceed</button>
+          <button class="btn btn-secondary" onclick="resetToPhone()">Back to Phone</button>
+        </div>
+
+        <!-- STEP 3: 2FA (If needed) -->
+        <div id="step-2fa" class="auth-step">
+          <h3 style="margin-bottom:0.5rem;">Two-Factor Auth</h3>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password-input" placeholder="Enter your Cloud Password">
+          </div>
+          <button class="btn" id="btn-verify-2fa" onclick="handleVerify2FA()">Unlock Account</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== DASHBOARD SECTION ==================== -->
+    <div id="dashboard-view" class="dashboard-view">
+      <!-- Sidebar -->
+      <aside class="glass-panel sidebar">
+        <div style="margin-bottom: 3rem; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.5rem; color: var(--color-primary);">✨</span>
+          <h2 style="font-family: var(--font-heading);">Spinify</h2>
+        </div>
+        <nav>
+          <div class="nav-item active" onclick="router('overview')">📊 Overview</div>
+          <div class="nav-item" onclick="router('accounts')">👥 Accounts</div>
+          <div class="nav-item" onclick="router('automations')">⚡ Automations</div>
+          <div class="nav-item" onclick="router('admin')">👑 Admin</div>
+        </nav>
+        <div style="margin-top: auto;">
+          <div class="nav-item" style="color: var(--hue-danger); opacity: 0.8;" onclick="handleLogout()">🚪 Logout</div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="glass-panel main-content" id="main-content">
+        <!-- Injected via JS -->
+        <div style="padding: 2rem;">
+          <h1>Welcome Back</h1>
+          <p>Loading your dashboard...</p>
+        </div>
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Action Successful</div>
+
+  <script src="app.js?v=6"></script>
+</body>
+
+</html>
