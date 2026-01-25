@@ -270,7 +270,7 @@ async function sendOTP() {
     return;
   }
 
-  const button = document.getElementById('verify-btn');
+  const button = document.getElementById('send-otp-btn');
   setButtonLoading(button, true);
 
   try {
@@ -298,8 +298,14 @@ async function sendOTP() {
     state.auth.phone_code_hash = data.phone_code_hash;
     state.auth.session_string = data.session_string;
 
-    // Show OTP input field
-    document.getElementById('otp-group').style.display = 'block';
+    // Enable OTP input field
+    const otpInput = document.getElementById('otp');
+    otpInput.disabled = false;
+    otpInput.focus();
+
+    // Hide Send OTP button, show Verify OTP button
+    button.style.display = 'none';
+    document.getElementById('verify-otp-btn').style.display = 'inline-flex';
 
     // Add resend button if not exists
     if (!document.getElementById('resend-otp-btn')) {
@@ -311,9 +317,6 @@ async function sendOTP() {
       resendBtn.style.marginTop = '10px';
       document.getElementById('otp-group').appendChild(resendBtn);
     }
-
-    button.textContent = 'Verify OTP';
-    button.onclick = verifyOTP;
 
     showToast('✓ OTP sent to your Telegram!', 'success');
 
