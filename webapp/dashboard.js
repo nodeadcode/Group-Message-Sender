@@ -46,7 +46,39 @@ function switchView(viewName) {
         </div>
       </div>`;
         loadAccounts();
-    } else if (viewName === 'automations') {
+    } else if (viewName === 'admin') {
+        container.innerHTML = `
+      <div id="view-admin">
+        <div class="content-header">
+           <h1>👑 Owner Controls</h1>
+        </div>
+
+        <!-- Admin Stats -->
+        <div class="stats-grid">
+          <div class="stat-card" style="border-color: var(--accent-gradient);">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="admin-total-users">Loading...</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Automations</div>
+            <div class="stat-value" id="admin-active-automations">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Broadcast -->
+        <div class="card">
+           <h2>📢 Broadcast Message</h2>
+           <p style="color: var(--text-secondary); margin-bottom: 1rem;">Send a message to all bot users.</p>
+           
+           <div class="form-group">
+              <textarea id="broadcast-msg" placeholder="Type your announcement..." style="height: 100px;"></textarea>
+           </div>
+           
+           <button class="btn-primary" onclick="sendBroadcast()" style="background: var(--accent-gradient);">Send to All Users</button>
+        </div>
+      </div>`;
+        loadAdminStats();
+    } else {
         container.innerHTML = `
       <div id="view-automations">
         <div class="content-header">

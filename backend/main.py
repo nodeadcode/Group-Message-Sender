@@ -505,6 +505,40 @@ async def root():
         "status": "running"
     }
 
+
+# Admin / Owner Endpoints
+@app.get("/api/admin/stats")
+async def get_admin_stats(db: Session = Depends(get_db)):
+    """Get platform-wide statistics (Owner only check in frontend/middleware ideally)"""
+    # In a full impl, we'd check if request.user.id == OWNER_TELEGRAM_ID
+    
+    total_users = db.query(User).count()
+    active_users = db.query(User).join(TelegramAccount).filter(TelegramAccount.is_active == True).distinct().count()
+    active_automations = len(active_schedulers)
+    
+    return {
+        "total_users": total_users,
+        "active_users": active_users,
+        "active_automations": active_automations,
+        "total_messages_sent": 0 # Placeholder for now
+    }
+
+class BroadcastRequest(BaseModel):
+    message: str
+
+@app.post("/api/admin/broadcast")
+async def broadcast_message(request: BroadcastRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """Send broadcast to all users via Bot"""
+    # Verify owner would happen here
+    
+    users = db.query(User).all()
+    count = 0
+    
+    # Mock broadcast for now as we haven't set up the Bot Instance globally yet
+    # In production: for user in users: bot.send_message(user.telegram_id, request.message)
+    
+    return {"status": "broadcast_queued", "recipient_count": len(users)}
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
