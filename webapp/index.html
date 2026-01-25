@@ -2,279 +2,59 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spinify Ads - Smart Telegram Scheduler</title>
-
-  <!-- SEO Meta Tags -->
-  <meta name="description"
-    content="Smart Telegram Ad Scheduler - Automate your Telegram group messaging with Spinify Ads">
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet">
-
-
-
-  <link rel="stylesheet" href="style.css?v=2">
-  <link rel="stylesheet" href="otp-boxes-styles.css?v=2">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spinify Ads | Login</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
-
+  <!-- Backgrounds -->
   <div class="background-gradient"></div>
   <div class="background-blur"></div>
 
   <div class="app">
-
-    <!-- Header with animated logo -->
-    <header>
-      <div class="logo-container">
-        <div class="logo-spin">✨</div>
-        <h1>Spinify Ads</h1>
-      </div>
-      <p class="subtitle">Smart Telegram Ad Scheduler</p>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-      <p class="step-indicator" id="step-indicator">Step 1 of 5</p>
-    </header>
-
-    <!-- Access Control Banner -->
-    <div class="access-banner" id="access-banner" style="display:none;">
-      <div class="access-banner-content">
-        <div class="access-icon">🔒</div>
-        <div class="access-text">
-          <h3>Access Required</h3>
-          <p id="access-status-text">Waiting for approval from @spinify</p>
-        </div>
-        <button class="btn-access" id="request-access-btn" onclick="requestAccess()">Request Access</button>
-      </div>
+    <!-- Header -->
+    <div class="logo-container">
+      <span style="font-size: 2rem;">✨</span>
+      <h1>Spinify Ads</h1>
     </div>
+    <p class="subtitle" id="step-indicator">Step 1 of 3: Authentication</p>
 
-    <!-- Main Card Container -->
-    <div class="card-container" id="main-app" style="display:none;">
-      <div class="card" id="step-container">
+    <!-- STEP 1: LOGIN -->
+    <section class="step active" id="step-1" data-step="1">
+      <div class="step-icon">📲</div>
+      <h2 style="text-align: center;">Login</h2>
+      <p class="step-description" style="text-align: center;">Enter your phone number to access the dashboard</p>
 
-        <!-- STEP 1: API Credentials -->
-        <section class="step active" id="step-1" data-step="1">
-          <div class="step-icon">🔐</div>
-          <h2>API Credentials</h2>
-          <p class="step-description">Enter your Telegram API credentials to get started</p>
-
-          <div class="form-group">
-            <label for="api_id">API ID</label>
-            <input type="number" id="api_id" placeholder="Enter your API ID" autocomplete="off">
-            <span class="error-message" id="api_id_error"></span>
-          </div>
-
-          <div class="form-group">
-            <label for="api_hash">API Hash</label>
-            <input type="text" id="api_hash" placeholder="Enter your API Hash" autocomplete="off">
-            <span class="error-message" id="api_hash_error"></span>
-          </div>
-
-          <div class="help-text">
-            <p>💡 Don't have API credentials? <a href="https://my.telegram.org/apps" target="_blank">Get them here</a>
-            </p>
-          </div>
-
-          <button class="btn-primary" onclick="validateAndGoToStep(2)">
-            Continue
-            <span class="btn-arrow">→</span>
-          </button>
-        </section>
-
-        <!-- STEP 2: Telegram Login -->
-        <section class="step" id="step-2" data-step="2">
-          <div class="step-icon">📲</div>
-          <h2>Telegram Authentication</h2>
-          <p class="step-description">Verify your phone number to access your account</p>
-
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" placeholder="+1234567890" autocomplete="tel">
-            <span class="error-message" id="phone_error"></span>
-          </div>
-
-          <div class="form-group" id="otp-group">
-            <label for="otp">OTP Code</label>
-            <div class="otp-boxes">
-              <input type="text" class="otp-box" maxlength="1" id="otp-1" disabled>
-              <input type="text" class="otp-box" maxlength="1" id="otp-2" disabled>
-              <input type="text" class="otp-box" maxlength="1" id="otp-3" disabled>
-              <input type="text" class="otp-box" maxlength="1" id="otp-4" disabled>
-              <input type="text" class="otp-box" maxlength="1" id="otp-5" disabled>
-              <input type="text" class="otp-box" maxlength="1" id="otp-6" disabled>
-            </div>
-            <span class="error-message" id="otp_error"></span>
-            <div class="help-text">
-              <p>💡 Click "Send OTP" to receive code via Telegram</p>
-            </div>
-          </div>
-
-          <div class="button-group">
-            <button class="btn-secondary" onclick="goToStep(1)">
-              ← Back
-            </button>
-            <button class="btn-primary" id="send-otp-btn" onclick="sendOTP()">
-              Send OTP
-              <span class="btn-arrow">→</span>
-            </button>
-            <button class="btn-primary" id="verify-otp-btn" onclick="verifyOTP()" style="display:none;">
-              Verify OTP
-              <span class="btn-arrow">→</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- STEP 3: Add Groups -->
-        <section class="step" id="step-3" data-step="3">
-          <div class="step-icon">👥</div>
-          <h2>Add Telegram Groups</h2>
-          <p class="step-description">Add up to 10 groups where you want to post ads</p>
-
-          <div class="form-group">
-            <label for="groups">Group Links (Max 10)</label>
-            <textarea id="groups"
-              placeholder="Paste group links here, one per line&#10;Example:&#10;https://t.me/group1&#10;https://t.me/group2"
-              rows="6"></textarea>
-            <span class="error-message" id="groups_error"></span>
-          </div>
-
-          <div class="help-text">
-            <p>⚠️ You must already be a member of these groups</p>
-          </div>
-
-          <div class="button-group">
-            <button class="btn-secondary" onclick="goToStep(2)">
-              ← Back
-            </button>
-            <button class="btn-primary" onclick="validateGroups()">
-              Verify Groups
-              <span class="btn-arrow">→</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- STEP 4: Saved Ads -->
-        <section class="step" id="step-4" data-step="4">
-          <div class="step-icon">📝</div>
-          <h2>Create Ad Messages</h2>
-          <p class="step-description">Write and save your advertisement messages</p>
-
-          <div class="form-group">
-            <label for="message">Message Content</label>
-            <textarea id="message" placeholder="Write your ad message here..." rows="4"></textarea>
-            <span class="error-message" id="message_error"></span>
-          </div>
-
-          <button class="btn-add" onclick="addMessage()">
-            + Add Message
-          </button>
-
-          <div class="message-list" id="messageList"></div>
-
-          <div class="button-group">
-            <button class="btn-secondary" onclick="goToStep(3)">
-              ← Back
-            </button>
-            <button class="btn-primary" onclick="validateMessages()">
-              Continue
-              <span class="btn-arrow">→</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- STEP 5: Scheduler -->
-        <section class="step" id="step-5" data-step="5">
-          <div class="step-icon">🚀</div>
-          <h2>Schedule Your Ads</h2>
-          <p class="step-description">Configure and start your ad campaign</p>
-
-          <div class="scheduler-info">
-            <div class="info-card">
-              <div class="info-icon">⏱️</div>
-              <div class="info-content">
-                <h3>Group Delay</h3>
-                <p class="info-value">60 seconds</p>
-                <span class="info-label">Between each group</span>
-              </div>
-            </div>
-
-            <div class="info-card">
-              <div class="info-icon">⏳</div>
-              <div class="info-content">
-                <h3>Message Delay</h3>
-                <p class="info-value">60 seconds</p>
-                <span class="info-label">Between each message</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Campaign Configuration -->
-          <div class="campaign-config">
-            <div class="form-group">
-              <label for="interval-selector">Campaign Interval</label>
-              <select id="interval-selector" onchange="updateInterval()">
-                <option value="20">Every 20 minutes</option>
-                <option value="30">Every 30 minutes</option>
-                <option value="45">Every 45 minutes</option>
-                <option value="60" selected>Every 1 hour</option>
-                <option value="90">Every 1.5 hours</option>
-                <option value="120">Every 2 hours</option>
-                <option value="180">Every 3 hours</option>
-                <option value="240">Every 4 hours</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="night-mode-label">
-                <span>Auto Night Mode</span>
-                <span class="night-mode-time">(10 PM - 6 AM)</span>
-              </label>
-              <div class="toggle-container">
-                <label class="toggle-switch">
-                  <input type="checkbox" id="night-mode-toggle" onchange="toggleNightMode()">
-                  <span class="toggle-slider"></span>
-                </label>
-                <span class="toggle-status" id="night-mode-status">Disabled</span>
-              </div>
-              <p class="help-text-small">Campaign will pause during night hours when enabled</p>
-            </div>
-          </div>
-
-          <div class="status-container" id="status-container">
-            <div class="status-message" id="status-message">Ready to start</div>
-          </div>
-
-          <div class="button-group vertical">
-            <button class="btn-start" id="start-btn" onclick="startScheduler()">
-              <span class="btn-icon">▶</span>
-              Start Campaign
-            </button>
-            <button class="btn-stop" id="stop-btn" onclick="stopScheduler()" disabled>
-              <span class="btn-icon">⏹</span>
-              Stop Campaign
-            </button>
-            <button class="btn-secondary" onclick="goToStep(4)">
-              ← Back to Messages
-            </button>
-          </div>
-        </section>
-
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="+1234567890">
       </div>
-    </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
+      <div class="form-group" id="otp-group" style="display:none;">
+        <label>OTP Code</label>
+        <input type="text" id="otp-input" placeholder="Enter code sent to Telegram">
+      </div>
+      <div class="form-group" id="password-group" style="display:none;">
+        <label>2FA Password</label>
+        <input type="password" id="password" placeholder="Enter your 2FA Password">
+      </div>
 
+      <div class="button-group">
+        <button class="btn-primary" id="login-btn" onclick="sendOTP()">Send OTP</button>
+      </div>
+    </section>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
   </div>
 
-  <script src="app.js?v=2"></script>
-  <script src="otp-boxes-handler.js?v=2"></script>
+  <!-- Scripts -->
+  <script src="app.js?v=4"></script>
 </body>
 
 </html>

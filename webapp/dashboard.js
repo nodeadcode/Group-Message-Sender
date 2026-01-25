@@ -1,240 +1,193 @@
 const CONFIG = {
-    API_BASE_URL: 'https://api.cinetimetv.store' // Ensure this matches production
+    API_BASE_URL: 'https://api.cinetimetv.store'
 };
 
 // Global 401 Handler
 async function fetchWithAuth(url, options = {}) {
-    const response = await fetch(url, options);
-    if (response.status === 401) {
-        logout();
+    try {
+        const response = await fetch(url, options);
+        if (response.status === 401) {
+            logout();
+            return null;
+        }
+        return response;
+    } catch (e) {
+        console.error("API Error:", e);
         return null;
     }
-    return response;
 }
 
-// Simple view switcher
+// =========================================
+// ROUTING / VIEW SWITCHER
+// =========================================
 function switchView(viewName) {
-    // Update Sidebar
+    // 1. Update Sidebar
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
-        if (item.innerText.toLowerCase().includes(viewName) ||
-            (viewName === 'home' && item.innerText.includes('Overview'))) {
+        if (item.innerText.toLowerCase().includes(viewName)) {
             item.classList.add('active');
         }
     });
 
-    // For now, simpler content replacement (Mock)
     const container = document.getElementById('view-container');
 
+    // 2. Render Content
     if (viewName === 'home') {
-        container.innerHTML = `
-      <div id="view-home">
-        <div class="content-header">
-          <h1>Dashboard Overview</h1>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Active Accounts</div>
-            <div class="stat-value" id="stat-accounts">Loading...</div>
-          </div>
-          <div class="stat-card">
-             <div class="stat-label">Messages Sent</div>
-             <div class="stat-value">0</div>
-          </div>
-        </div>
-      </div>`;
-        loadStats();
+        renderHome(container);
     } else if (viewName === 'accounts') {
-        container.innerHTML = `
-      <div id="view-accounts">
-        <div class="content-header">
-           <h1>Telegram Accounts</h1>
-           <button class="btn-primary" style="width: auto;" onclick="window.location.href='index.html'">+ Add New</button>
-        </div>
-        <div class="card">
-           <div id="accounts-list" style="padding: 1rem;">Loading accounts...</div>
-        </div>
-      </div>`;
-        loadAccounts();
-    } else if (viewName === 'admin') {
-        container.innerHTML = `
-      <div id="view-admin">
-        <div class="content-header">
-           <h1>👑 Owner Controls</h1>
-        </div>
-
-        <!-- Admin Stats -->
-        <div class="stats-grid">
-          <div class="stat-card" style="border-color: var(--accent-gradient);">
-            <div class="stat-label">Total Users</div>
-            <div class="stat-value" id="admin-total-users">Loading...</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Active Automations</div>
-            <div class="stat-value" id="admin-active-automations">Loading...</div>
-          </div>
-        </div>
-
-        <!-- Broadcast -->
-        <div class="card">
-           <h2>📢 Broadcast Message</h2>
-           <p style="color: var(--text-secondary); margin-bottom: 1rem;">Send a message to all bot users.</p>
-           
-           <div class="form-group">
-              <textarea id="broadcast-msg" placeholder="Type your announcement..." style="height: 100px;"></textarea>
-           </div>
-           
-           <button class="btn-primary" onclick="sendBroadcast()" style="background: var(--accent-gradient);">Send to All Users</button>
-        </div>
-      </div>`;
-        loadAdminStats();
+        renderAccounts(container);
     } else if (viewName === 'automations') {
-        container.innerHTML = `
-      <div id="view-automations">
-        <div class="content-header">
-           <h1>Automation Settings</h1>
-        </div>
-        
-        <div class="card" style="max-width: 800px;">
-           <div class="form-group">
-              <label>Source Content</label>
-              <div style="padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.2);">
-                 <span style="font-size: 1.2rem;">📂 Saved Messages</span>
-                 <p style="margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--text-secondary);">
-                    Messages will be fetched automatically from your Telegram "Saved Messages".
-                    Latest 10 messages will be cycled.
-                 </p>
-              </div>
-           </div>
-
-           <div class="form-group">
-              <label>Target Groups (One per line)</label>
-              <textarea id="groups-input" placeholder="https://t.me/group1\nhttps://t.me/group2" style="height: 150px;"></textarea>
-           </div>
-           
-           <div class="form-group">
-              <label>Loop Interval (Minutes)</label>
-              <input type="number" id="interval-input" value="60" min="20" style="width: 100px;">
-              <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;">Min: 20 mins</span>
-           </div>
-
-           <div class="button-group">
-              <button class="btn-primary" onclick="startAutomation()">▶ Start Automation</button>
-              <button class="btn-stop" onclick="stopAutomation()">■ Stop</button>
-           </div>
-        </div>
-      </div>`;
-    } else {
-        container.innerHTML = `<h1>${viewName.charAt(0).toUpperCase() + viewName.slice(1)}</h1><p>Coming soon...</p>`;
+        renderAutomations(container);
+    } else if (viewName === 'admin') {
+        renderAdmin(container);
     }
 }
 
-async function loadStats() {
-    // Mock for now, replace with API call
-    // In production: await fetchWithAuth(...)
+// =========================================
+// RENDER FUNCTIONS
+// =========================================
+function renderHome(container) {
+    container.innerHTML = `
+        <div class="content-header"><h1>Overview</h1></div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Active Accounts</div>
+                <div class="stat-value" id="stat-accounts">Loading...</div>
+            </div>
+            <div class="stat-card">
+                 <div class="stat-label">Messages Sent</div>
+                 <div class="stat-value">0</div>
+            </div>
+        </div>
+    `;
+    // Mock Load
     setTimeout(() => {
-        const el = document.getElementById('stat-accounts');
-        if (el) el.innerText = "1";
+        if (document.getElementById('stat-accounts'))
+            document.getElementById('stat-accounts').innerText = "1";
     }, 500);
 }
 
-async function loadAccounts() {
-    try {
-        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/accounts`);
-        if (!response) return;
+async function renderAccounts(container) {
+    container.innerHTML = `
+        <div class="content-header">
+            <h1>Telegram Accounts</h1>
+            <button class="btn-secondary" onclick="window.location.href='index.html'">+ Add New</button>
+        </div>
+        <div class="card">
+            <div id="accounts-list">Loading...</div>
+        </div>
+    `;
 
-        const accounts = await response.json();
+    // Fetch
+    const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/accounts`);
+    if (res) {
+        const accounts = await res.json();
         const html = accounts.map(acc => `
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem 0;">
+            <div style="display:flex; justify-content:space-between; padding:1rem; border-bottom:1px solid rgba(255,255,255,0.1);">
                 <div>
-                    <div style="font-weight: bold;">${acc.phone}</div>
-                    <div style="font-size: 0.8rem; color: ${acc.is_active ? '#38ef7d' : '#ff6b6b'};">● ${acc.is_active ? 'Active' : 'Inactive'}</div>
+                    <b>${acc.phone}</b>
+                    <div style="font-size:0.8rem; color:${acc.is_active ? '#00ff88' : 'red'}">● ${acc.is_active ? 'Active' : 'Inactive'}</div>
                 </div>
-                <button class="btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
             </div>
         `).join('');
-
-        const el = document.getElementById('accounts-list');
-        if (el) el.innerHTML = html || '<p>No accounts connected</p>';
-    } catch (e) {
-        console.error("Load accounts error", e);
+        document.getElementById('accounts-list').innerHTML = html || 'No accounts found.';
     }
 }
 
-async function startAutomation() {
+function renderAutomations(container) {
+    container.innerHTML = `
+        <div class="content-header"><h1>Automation Engine</h1></div>
+        <div class="card" style="max-width:600px;">
+            <div class="form-group">
+                <label>Source: Saved Messages</label>
+                <div style="padding:1rem; background:rgba(255,255,255,0.05); border-radius:8px;">
+                     Using "Saved Messages" of connected account.
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Target Groups (One per line)</label>
+                <textarea id="groups-input" rows="5" placeholder="https://t.me/group1..."></textarea>
+            </div>
+            <div class="form-group">
+                 <label>Loop Interval (Mins) - Min 20</label>
+                 <input type="number" id="interval-input" value="60" min="20">
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="startCampaign()">Start Campaign</button>
+                <button class="btn-stop" onclick="alert('Stop pending Phase 4 map')">Stop</button>
+            </div>
+        </div>
+    `;
+}
+
+async function renderAdmin(container) {
+    container.innerHTML = `
+        <div class="content-header"><h1>Owner Controls</h1></div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" id="admin-users">...</div>
+            </div>
+            <div class="stat-card">
+                 <div class="stat-label">Automations</div>
+                 <div class="stat-value" id="admin-auto">...</div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Broadcast</h2>
+            <textarea id="broadcast-msg" rows="3" placeholder="Message to all users..."></textarea>
+            <button class="btn-primary" style="margin-top:1rem;" onclick="sendBroadcast()">Send</button>
+        </div>
+    `;
+
+    const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/stats`);
+    if (res) {
+        const data = await res.json();
+        document.getElementById('admin-users').innerText = data.total_users;
+        document.getElementById('admin-auto').innerText = data.active_automations;
+    }
+}
+
+// =========================================
+// ACTIONS
+// =========================================
+async function startCampaign() {
     const groups = document.getElementById('groups-input').value.split('\n').filter(g => g.trim());
     const interval = parseInt(document.getElementById('interval-input').value);
 
-    if (groups.length === 0) {
-        alert("Please add at least one group link.");
-        return;
-    }
-    if (interval < 20) {
-        alert("Minimum interval is 20 minutes.");
-        return;
-    }
+    if (interval < 20) return alert("Min interval is 20 mins");
+    if (groups.length === 0) return alert("Add groups");
 
-    // Mock Account ID 1 for now - in production get from selected account
-    try {
-        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/campaigns/start`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                account_id: 1, // TODO: Dynamic selection
-                interval_minutes: interval,
-                night_mode_enabled: false,
-                groups: groups,
-                messages: [] // Ignored by backend now
-            })
-        });
+    const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/campaigns/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            account_id: 1, // Mock
+            interval_minutes: interval,
+            groups: groups
+        })
+    });
 
-        if (response && response.ok) {
-            alert("Automation Started! Messages will be forwarded from Saved Messages.");
-        } else {
-            alert("Failed to start.");
-        }
-    } catch (e) {
-        console.error(e);
-        alert("Error starting automation.");
-    }
-}
-
-function stopAutomation() {
-    alert("Stop feature pending backend user mapping (Phase 4).");
-}
-
-async function loadAdminStats() {
-    try {
-        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/stats`);
-        if (!response) return;
-        const data = await response.json();
-
-        document.getElementById('admin-total-users').innerText = data.total_users;
-        document.getElementById('admin-active-automations').innerText = data.active_automations;
-    } catch (e) {
-        console.error("Admin stats error", e);
-    }
+    if (res && res.ok) alert("Campaign Started!");
+    else alert("Failed to start");
 }
 
 async function sendBroadcast() {
     const msg = document.getElementById('broadcast-msg').value;
-    if (!msg) return alert("Please enter a message");
+    if (!msg) return;
 
-    if (!confirm("Are you sure you want to send this to ALL users?")) return;
-
-    try {
-        await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/broadcast`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: msg })
-        });
-        alert("Broadcast queued!");
-        document.getElementById('broadcast-msg').value = "";
-    } catch (e) {
-        alert("Broadcast failed");
-    }
+    await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/broadcast`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+    });
+    alert("Broadcast sent");
 }
 
+function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+}
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {
