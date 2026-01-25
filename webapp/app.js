@@ -256,17 +256,6 @@ function validateMessages() {
 // ========================================
 
 /**
- * Handle OTP button click - routes to send or verify based on state
- */
-function handleOTPButton() {
-  if (state.auth.otpSent) {
-    verifyOTP();
-  } else {
-    sendOTP();
-  }
-}
-
-/**
  * Send OTP to phone number
  */
 async function sendOTP() {
@@ -317,8 +306,9 @@ async function sendOTP() {
     otpInput.disabled = false;
     otpInput.focus();
 
-    // Change button text
-    button.innerHTML = 'Verify OTP <span class="btn-arrow">→</span>';
+    // Show Verify button, hide Send button
+    button.style.display = 'none';
+    document.getElementById('verify-otp-btn').style.display = 'inline-flex';
     state.auth.otpSent = true;
 
     showToast('✓ OTP sent to your Telegram!', 'success');
