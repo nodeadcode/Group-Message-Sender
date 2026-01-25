@@ -10,12 +10,21 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 WEBAPP_URL = os.getenv("WEBAPP_URL", "http://localhost:8080")
 
 # Bot Configuration
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8554290865:AAH1qQ0jOSkdj7A6LGCP1rm_KWvCgp_jaqs")
-OWNER_TELEGRAM_ID = int(os.getenv("OWNER_TELEGRAM_ID", "0"))  # Set your Telegram ID
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    print("WARNING: BOT_TOKEN not set in .env")
+
+OWNER_TELEGRAM_ID = int(os.getenv("OWNER_TELEGRAM_ID", "0"))
 
 # Security
-SESSION_SECRET = os.getenv("SESSION_SECRET", "CHANGE_THIS_SECRET_KEY_IN_PRODUCTION")
-JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_THIS_JWT_SECRET_IN_PRODUCTION")
+SESSION_SECRET = os.getenv("SESSION_SECRET")
+JWT_SECRET = os.getenv("JWT_SECRET")
+
+if not SESSION_SECRET or not JWT_SECRET:
+    print("WARNING: Security secrets not set in .env. Using unsafe defaults for dev only.")
+    SESSION_SECRET = "unsafe-dev-secret"
+    JWT_SECRET = "unsafe-jwt-secret"
+
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24 * 7  # 7 days
 

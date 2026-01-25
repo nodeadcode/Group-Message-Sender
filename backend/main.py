@@ -39,11 +39,11 @@ def health_check():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "*"  # Allow all origins for now to fix connection issues
-        # WEBAPP_URL,
-        # "http://localhost:8080",
-        # "https://cinetimetv.store",
-        # "http://cinetimetv.store"
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+        WEBAPP_URL,
+        "https://cinetimetv.store",
+        "http://cinetimetv.store"
     ],
     allow_credentials=True,
     allow_methods=["*"],
