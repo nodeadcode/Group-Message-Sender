@@ -2,6 +2,16 @@ const CONFIG = {
     API_BASE_URL: 'https://api.cinetimetv.store' // Ensure this matches production
 };
 
+// Global 401 Handler
+async function fetchWithAuth(url, options = {}) {
+    const response = await fetch(url, options);
+    if (response.status === 401) {
+        logout();
+        return null;
+    }
+    return response;
+}
+
 // Simple view switcher
 function switchView(viewName) {
     // Update Sidebar
@@ -121,6 +131,7 @@ function switchView(viewName) {
 
 async function loadStats() {
     // Mock for now, replace with API call
+    // In production: await fetchWithAuth(...)
     setTimeout(() => {
         const el = document.getElementById('stat-accounts');
         if (el) el.innerText = "1";
@@ -128,18 +139,26 @@ async function loadStats() {
 }
 
 async function loadAccounts() {
-    // Mock list
-    setTimeout(() => {
-        const el = document.getElementById('accounts-list');
-        if (el) el.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem 0;">
-            <div>
-                <div style="font-weight: bold;">+91 76782 61583</div>
-                <div style="font-size: 0.8rem; color: #38ef7d;">● Active</div>
+    try {
+        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/accounts`);
+        if (!response) return;
+
+        const accounts = await response.json();
+        const html = accounts.map(acc => `
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem 0;">
+                <div>
+                    <div style="font-weight: bold;">${acc.phone}</div>
+                    <div style="font-size: 0.8rem; color: ${acc.is_active ? '#38ef7d' : '#ff6b6b'};">● ${acc.is_active ? 'Active' : 'Inactive'}</div>
+                </div>
+                <button class="btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
             </div>
-            <button class="btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
-        </div>`;
-    }, 500);
+        `).join('');
+
+        const el = document.getElementById('accounts-list');
+        if (el) el.innerHTML = html || '<p>No accounts connected</p>';
+    } catch (e) {
+        console.error("Load accounts error", e);
+    }
 }
 
 async function startAutomation() {
@@ -157,7 +176,7 @@ async function startAutomation() {
 
     // Mock Account ID 1 for now - in production get from selected account
     try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/campaigns/start`, {
+        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/campaigns/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -169,7 +188,7 @@ async function startAutomation() {
             })
         });
 
-        if (response.ok) {
+        if (response && response.ok) {
             alert("Automation Started! Messages will be forwarded from Saved Messages.");
         } else {
             alert("Failed to start.");
@@ -186,7 +205,8 @@ function stopAutomation() {
 
 async function loadAdminStats() {
     try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/admin/stats`);
+        const response = await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/stats`);
+        if (!response) return;
         const data = await response.json();
 
         document.getElementById('admin-total-users').innerText = data.total_users;
@@ -203,7 +223,7 @@ async function sendBroadcast() {
     if (!confirm("Are you sure you want to send this to ALL users?")) return;
 
     try {
-        await fetch(`${CONFIG.API_BASE_URL}/api/admin/broadcast`, {
+        await fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/broadcast`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: msg })
