@@ -301,10 +301,12 @@ async function sendOTP() {
     state.auth.phone_code_hash = data.phone_code_hash;
     state.auth.session_string = data.session_string;
 
-    // Enable OTP input field
-    const otpInput = document.getElementById('otp');
-    otpInput.disabled = false;
-    otpInput.focus();
+    // Enable OTP input boxes
+    for (let i = 1; i <= 6; i++) {
+      const box = document.getElementById(`otp-${i}`);
+      box.disabled = false;
+    }
+    document.getElementById('otp-1').focus();
 
     // Show Verify button, hide Send button
     button.style.display = 'none';
@@ -345,7 +347,12 @@ async function resendOTP() {
 async function verifyOTP() {
   clearError('otp');
 
-  const otp = document.getElementById('otp').value.trim();
+  // Collect OTP from all boxes
+  let otp = '';
+  for (let i = 1; i <= 6; i++) {
+    otp += document.getElementById(`otp-${i}`).value;
+  }
+  otp = otp.trim();
 
   if (!otp) {
     showError('otp', 'OTP is required');
