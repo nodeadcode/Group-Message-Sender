@@ -46,6 +46,42 @@ function switchView(viewName) {
         </div>
       </div>`;
         loadAccounts();
+    } else if (viewName === 'automations') {
+        container.innerHTML = `
+      <div id="view-automations">
+        <div class="content-header">
+           <h1>Automation Settings</h1>
+        </div>
+        
+        <div class="card" style="max-width: 800px;">
+           <div class="form-group">
+              <label>Source Content</label>
+              <div style="padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.2);">
+                 <span style="font-size: 1.2rem;">📂 Saved Messages</span>
+                 <p style="margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--text-secondary);">
+                    Messages will be fetched automatically from your Telegram "Saved Messages".
+                    Latest 10 messages will be cycled.
+                 </p>
+              </div>
+           </div>
+
+           <div class="form-group">
+              <label>Target Groups (One per line)</label>
+              <textarea id="groups-input" placeholder="https://t.me/group1\nhttps://t.me/group2" style="height: 150px;"></textarea>
+           </div>
+           
+           <div class="form-group">
+              <label>Loop Interval (Minutes)</label>
+              <input type="number" id="interval-input" value="60" min="20" style="width: 100px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;">Min: 20 mins</span>
+           </div>
+
+           <div class="button-group">
+              <button class="btn-primary" onclick="startAutomation()">▶ Start Automation</button>
+              <button class="btn-stop" onclick="stopAutomation()">■ Stop</button>
+           </div>
+        </div>
+      </div>`;
     } else {
         container.innerHTML = `<h1>${viewName.charAt(0).toUpperCase() + viewName.slice(1)}</h1><p>Coming soon...</p>`;
     }
@@ -72,6 +108,48 @@ async function loadAccounts() {
             <button class="btn-secondary" style="padding: 0.5rem 1rem;">Manage</button>
         </div>`;
     }, 500);
+}
+
+async function startAutomation() {
+    const groups = document.getElementById('groups-input').value.split('\n').filter(g => g.trim());
+    const interval = parseInt(document.getElementById('interval-input').value);
+
+    if (groups.length === 0) {
+        alert("Please add at least one group link.");
+        return;
+    }
+    if (interval < 20) {
+        alert("Minimum interval is 20 minutes.");
+        return;
+    }
+
+    // Mock Account ID 1 for now - in production get from selected account
+    try {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/campaigns/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                account_id: 1, // TODO: Dynamic selection
+                interval_minutes: interval,
+                night_mode_enabled: false,
+                groups: groups,
+                messages: [] // Ignored by backend now
+            })
+        });
+
+        if (response.ok) {
+            alert("Automation Started! Messages will be forwarded from Saved Messages.");
+        } else {
+            alert("Failed to start.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Error starting automation.");
+    }
+}
+
+function stopAutomation() {
+    alert("Stop feature pending backend user mapping (Phase 4).");
 }
 
 function logout() {
